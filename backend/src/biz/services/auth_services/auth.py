@@ -1,6 +1,6 @@
 import datetime
 import hashlib
-from typing import Optional
+from typing import Optional, Union
 
 import pytz
 from pydantic import EmailStr
@@ -66,3 +66,13 @@ class AuthService(BaseService):
         return Account.parse_obj({"account_id": account_id,
                                   "email": email,
                                   "created_at": created_at})
+
+    def check_by_auth_data(self, email: Union[EmailStr, str], password: str) -> Optional[Account]:
+        account = self.collection.find_one({"email": email, "password": self.create_hash_password(password)})
+        if not account:
+            raise ValidationError("Incorrect auth data")
+        return Account.parse_obj(account)
+
+    def get_account(self, email: EmailStr, password: str) -> Account:
+        account = self.check_by_auth_data(email, password)
+        return account
