@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from fastapi import status
 
 from app.models.auth import AuthRegisterData, Account, AuthLoginData, AuthToken
 from src.biz.services.auth_services.auth import AuthService
@@ -10,7 +11,7 @@ auth_router = APIRouter(
 )
 
 
-@auth_router.post('/signup')
+@auth_router.post('/signup', status_code=status.HTTP_201_CREATED)
 async def signup(auth_data: AuthRegisterData):
     account = AuthService().create_account(
         email=auth_data.email,
