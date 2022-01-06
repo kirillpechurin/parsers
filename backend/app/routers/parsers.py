@@ -7,7 +7,8 @@ from src.biz.exceptions.custom import ValidationError, NotFoundError
 from app.models.auth import Account
 from app.models.parsers import Order, TypeParser
 from app.models.responses.wrap import WrapModel
-from src.biz.services.parsers_services.map_service import MapService
+from src.biz.services.parsers_services.maps.map_service import MapService
+
 
 from src.biz.services.parsers_services.maps.map_order import MapOrderService
 
