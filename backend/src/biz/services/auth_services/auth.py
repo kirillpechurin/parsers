@@ -86,3 +86,18 @@ class AuthService(BaseService):
 
     def confirm_account(self, account_id: str) -> None:
         self.collection.update_one({"_id": ObjectId(account_id)}, {"$set": {"confirmed": True}})
+
+    def get_by_email(self, email: EmailStr) -> Optional[Account]:
+        obj_account = self.collection.find_one({"email": email})
+        if not obj_account:
+            raise ValidationError("Account with such email was not found")
+        return Account.parse_obj(obj_account)
+
+    @staticmethod
+    def send_forgot_link(account_id: str, email: EmailStr) -> None:
+        link = f"http://url/{account_id}"
+        MailService().send(
+            to=email,
+            subject="Reset password link",
+            contents=[f"Перейдите по ссылке для сброса пароля.\n\n {link}"]
+        )

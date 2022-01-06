@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Path
 from fastapi import status
 from fastapi.responses import Response
-from app.models.auth import AuthRegisterData, Account, AuthLoginData, AuthToken
+from app.models.auth import AuthRegisterData, Account, AuthLoginData, AuthToken, ForgotPasswordData
 from app.models.responses.wrap import WrapModel
 from src.biz.exceptions.custom import ValidationError, InternalError
 from src.biz.services.auth_services.auth import AuthService
@@ -191,4 +191,36 @@ async def confirm_email(
     if account.confirmed:
         raise ValidationError("Already confirmed")
     AuthService().confirm_account(account_id=account_id)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@auth_router.post(
+    "/password/forgot",
+    summary="Забыли пароль",
+    description="Отправка ссылки для сброса пароля на email",
+    status_code=status.HTTP_204_NO_CONTENT,
+    response_description="Ссылка успешно отправлена на email",
+    responses={
+        "422": {
+            "content": {
+                "application/json": {
+                    "example": ValidationError("Account with such email was not found").exc_object
+                }
+            }
+        },
+        "42201": {
+            "content": {
+                "application/json": {
+                    "example": ValidationError("Account is not confirmed").exc_object
+                }
+            }
+        },
+    }
+)
+async def forgot_password(forgot_password_data: ForgotPasswordData):
+    email = forgot_password_data.email
+    account = AuthService().get_by_email(email)
+    if not account.confirmed:
+        raise ValidationError("Account is not confirmed")
+    AuthService.send_forgot_link(account.account_id, account.email)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
