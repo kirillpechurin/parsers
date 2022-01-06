@@ -1,4 +1,5 @@
 import datetime
+from typing import Optional
 
 import pytz
 from pydantic import EmailStr, BaseModel, Field
@@ -190,5 +191,35 @@ class AuthResetPasswordData(BaseModel):
                 "old_password": "admin12345",
                 "new_password": "admin1234",
                 "repeat_new_password": "admin1234",
+            }
+        }
+
+
+class PatchAccountData(BaseModel):
+    email: Optional[EmailStr] = Field(
+        None,
+        title="New E-mail address",
+        description="New E-mail address. User need again confirm it",
+        example="new_email@gmail.com"
+    )
+    first_name: Optional[str] = Field(
+        None,
+        title="First name user",
+        description="First name user, may be ''",
+        example="Firstname"
+    )
+    last_name: Optional[str] = Field(
+        None,
+        title="Last name user",
+        description="Last name user, may be ''",
+        example="Lastname"
+    )
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "email": "new_email@gmail.com",
+                "first_name": "Firstname",
+                "last_name": "Lastname",
             }
         }
