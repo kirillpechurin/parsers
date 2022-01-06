@@ -43,7 +43,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         content={
             "detail": {
                 "location": error_dict['loc'][0],
-                "field": error_dict['loc'][1],
+                "field": error_dict['loc'][1] if len(error_dict['loc']) > 1 else "",
                 "message": error_dict['msg'],
                 "type": error_dict["type"],
             },
