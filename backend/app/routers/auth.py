@@ -1,6 +1,8 @@
-from fastapi import APIRouter, Path
+from fastapi import APIRouter, Path, Depends
 from fastapi import status
 from fastapi.responses import Response
+from fastapi.security import OAuth2PasswordRequestForm
+
 from app.models.auth import AuthRegisterData, Account, AuthLoginData, AuthToken, ForgotPasswordData
 from app.models.responses.wrap import WrapModel
 from src.biz.exceptions.custom import ValidationError, InternalError
@@ -279,3 +281,16 @@ async def reset_password(
                                   password=auth_register_data.password,
                                   repeat_password=auth_register_data.password)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@auth_router.post(
+    "/token",
+    include_in_schema=False
+)
+async def token(form_data: OAuth2PasswordRequestForm = Depends()):
+    return await login(
+        AuthLoginData(
+            email=form_data.username,
+            password=form_data.password
+        )
+    )
