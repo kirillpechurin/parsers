@@ -348,3 +348,35 @@ async def token(form_data: OAuth2PasswordRequestForm = Depends()):
             password=form_data.password
         )
     )
+
+
+@auth_router.get(
+    "/me",
+    summary="Детальная информация о пользователе",
+    description="Детальная информация о пользователе",
+    status_code=status.HTTP_200_OK,
+    response_description="Успешно получена детальная информация",
+    response_model=WrapModel,
+    responses={
+        "422": {
+            "description": "Некоректные данные",
+            "content": {
+                "application/json": {
+                    "example":ValidationError("Account with such id was not found").exc_object
+                }
+            }
+        },
+        "42201": {
+            "description": "Некорректный токен",
+            "content": {
+                "application/json": {
+                    "example": ValidationError("Authentication credentials is not valid").exc_object
+                }
+            }
+        }
+    }
+)
+async def get_account(
+        account: Account = Depends(get_current_account)
+):
+    return WrapModel(data=account)
