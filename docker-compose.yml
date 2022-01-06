@@ -62,3 +62,6 @@ services:
       - rabbitmq
     links:
       - rabbitmq:rabbitmq
+
+volumes:
+  ds_mongodb_data:
