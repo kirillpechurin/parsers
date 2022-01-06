@@ -146,3 +146,19 @@ class Account(BaseModel):
             data["account_id"] = str(obj.pop("_id"))
         data.update(obj)
         return super(Account, cls).parse_obj(data)
+
+
+class ForgotPasswordData(BaseModel):
+    email: EmailStr = Field(
+        ...,
+        title="Email user",
+        description="Confirm E-mail address user",
+        example="email@gmail.com"
+    )
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "email": "example@gmail.com",
+            }
+        }
