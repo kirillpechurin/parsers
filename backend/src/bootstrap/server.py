@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 
 
 class Server:
@@ -20,3 +21,7 @@ class Server:
         cls.app: FastAPI
         for handler, exception_class in handlers:
             cls.app.add_exception_handler(exception_class, handler)
+
+    @classmethod
+    def set_static(cls):
+        cls.app.mount("/static", StaticFiles(directory="static"), name="static")
