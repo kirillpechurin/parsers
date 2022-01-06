@@ -101,3 +101,14 @@ class AuthService(BaseService):
             subject="Reset password link",
             contents=[f"Перейдите по ссылке для сброса пароля.\n\n {link}"]
         )
+
+    def update_password(self, account_id: str, password: str, repeat_password: str) -> None:
+        self.check_password(password, repeat_password)
+        self.collection.update_one(
+            {
+                "_id": ObjectId(account_id)
+            },
+            {
+                "$set": {"password": self.create_hash_password(password)}
+            }
+        )

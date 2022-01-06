@@ -224,3 +224,58 @@ async def forgot_password(forgot_password_data: ForgotPasswordData):
         raise ValidationError("Account is not confirmed")
     AuthService.send_forgot_link(account.account_id, account.email)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@auth_router.post(
+    "/password/reset/{account_id}",
+    summary="Смена пароля по ссылке, отправленной на почту",
+    description="Смена пароля по ссылке, отправленной на почту. Для неавторизованного пользователя",
+    status_code=status.HTTP_204_NO_CONTENT,
+    response_description="Пароль успешно обновлен",
+    responses={
+        "422": {
+            "description": "Некоректные данные",
+            "content": {
+                "application/json": {
+                    "example": ValidationError("Incorrect Auth Data").exc_object
+                }
+            }
+        },
+        "42201": {
+            "description": "Пароли не совпадают",
+            "content": {
+                "application/json": {
+                    "example": ValidationError("Passwords does not equal").exc_object
+                }
+            }
+        },
+        "42202": {
+            "description": "Длина пароля меньше нужной",
+            "content": {
+                "application/json": {
+                    "example": ValidationError("Length password might be more than 8").exc_object
+                }
+            }
+        },
+        "500": {
+            "description": "Внутренняя ошибка",
+            "content": {
+                "application/json": {
+                    "example": InternalError().exc_object
+                }
+            }
+        }
+    }
+)
+async def reset_password(
+        auth_register_data: AuthRegisterData,
+        account_id: str = Path(...)
+):
+    account = AuthService().get_by_email(auth_register_data.email)
+    if account.account_id != account_id:
+        raise ValidationError("Incorrect Auth Data")
+
+    AuthService().update_password(account_id=account.account_id,
+                                  password=auth_register_data.password,
+                                  repeat_password=auth_register_data.password)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
