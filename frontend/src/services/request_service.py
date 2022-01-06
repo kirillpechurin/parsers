@@ -2,7 +2,7 @@ import json
 
 import requests
 
-API_SERVER = "http://localhost:8000"
+API_SERVER = "http://backend:8000"
 HEADER_TOKEN = "Authorization"
 TOKEN = "Bearer {}"
 
