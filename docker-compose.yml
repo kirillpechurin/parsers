@@ -29,3 +29,36 @@ services:
     ports:
       - "27017:27017"
     restart: always
+
+  backend:
+    restart: always
+    container_name: ds-parsers-backend
+    build:
+      context: ./backend
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./backend:/backend/
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongodb
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: ds-parsers-rabbitmq
+    ports:
+      - "5672:5672"
+
+  celery:
+    restart: always
+    container_name: ds-parsers-celery
+    build:
+      context: ./backend
+    command: celery -A src.cel.tasks worker --loglevel=info
+    volumes:
+      - ./backend:/backend/
+    depends_on:
+      - backend
+      - rabbitmq
+    links:
+      - rabbitmq:rabbitmq
