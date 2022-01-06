@@ -1,0 +1,15 @@
+version: "3"
+
+services:
+
+  frontend:
+    restart: always
+    container_name: ds-parsers-frontend
+    build:
+      context: ./frontend
+    env_file:
+      - ./frontend/.env.frontend
+    volumes:
+      - ./frontend:/frontend/
+    ports:
+      - "5000:5000"
