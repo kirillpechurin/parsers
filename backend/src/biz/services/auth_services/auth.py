@@ -3,6 +3,7 @@ import hashlib
 from typing import Optional, Union
 
 import pytz
+from bson import ObjectId
 from pydantic import EmailStr
 
 from app.models.auth import Account
@@ -76,3 +77,9 @@ class AuthService(BaseService):
     def get_account(self, email: EmailStr, password: str) -> Account:
         account = self.check_by_auth_data(email, password)
         return account
+
+    def get_by_id(self, account_id: str) -> Optional[Account]:
+        obj_account = self.collection.find_one({"_id": ObjectId(account_id)})
+        if not obj_account:
+            raise ValidationError("Account with such id was not found")
+        return Account.parse_obj(obj_account)

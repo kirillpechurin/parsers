@@ -114,3 +114,13 @@ async def login(auth_login_data: AuthLoginData):
         access_token=access_token,
     ))
 
+
+@auth_router.post(
+    "/check_token"
+)
+async def check_token(auth_token: AuthToken):
+    account_id = JWTService.decode_token(auth_token.access_token)
+    AuthService().get_by_id(account_id=account_id)
+    return WrapModel(data={
+        "status": True
+    })
