@@ -3,7 +3,9 @@ from fastapi import status
 from fastapi.responses import Response
 from fastapi.security import OAuth2PasswordRequestForm
 
-from app.models.auth import AuthRegisterData, Account, AuthLoginData, AuthToken, ForgotPasswordData
+from app.dependences.auth import get_current_account
+from app.models.auth import AuthRegisterData, Account, AuthLoginData, AuthToken, ForgotPasswordData, \
+    AuthResetPasswordData
 from app.models.responses.wrap import WrapModel
 from src.biz.exceptions.custom import ValidationError, InternalError
 from src.biz.services.auth_services.auth import AuthService
@@ -225,6 +227,58 @@ async def forgot_password(forgot_password_data: ForgotPasswordData):
     if not account.confirmed:
         raise ValidationError("Account is not confirmed")
     AuthService.send_forgot_link(account.account_id, account.email)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@auth_router.post(
+    "/password/reset/auth",
+    summary="Смена пароля для авторизованного пользователя",
+    description="Смена пароля для авторизованного пользователя",
+    status_code=status.HTTP_204_NO_CONTENT,
+    response_description="Пароль успешно обновлен",
+    responses={
+        "422": {
+            "description": "Некоректные данные",
+            "content": {
+                "application/json": {
+                    "example": ValidationError("Incorrect auth data").exc_object
+                }
+            }
+        },
+        "42201": {
+            "description": "Пароли не совпадают",
+            "content": {
+                "application/json": {
+                    "example": ValidationError("Passwords does not equal").exc_object
+                }
+            }
+        },
+        "42202": {
+            "description": "Длина пароля меньше нужной",
+            "content": {
+                "application/json": {
+                    "example": ValidationError("Length password might be more than 8").exc_object
+                }
+            }
+        },
+        "500": {
+            "description": "Внутренняя ошибка",
+            "content": {
+                "application/json": {
+                    "example": InternalError().exc_object
+                }
+            }
+        }
+    }
+)
+async def auth_reset_password(
+        auth_reset_password_data: AuthResetPasswordData,
+        account: Account = Depends(get_current_account)
+):
+    AuthService().check_by_auth_data(email=account.email, password=auth_reset_password_data.old_password)
+    AuthService().update_password(account_id=account.account_id,
+                                  password=auth_reset_password_data.new_password,
+                                  repeat_password=auth_reset_password_data.repeat_new_password)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
