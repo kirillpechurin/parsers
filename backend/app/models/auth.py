@@ -162,3 +162,33 @@ class ForgotPasswordData(BaseModel):
                 "email": "example@gmail.com",
             }
         }
+
+
+class AuthResetPasswordData(BaseModel):
+    old_password: str = Field(
+        ...,
+        title="Old Password",
+        description="Old password authenticated user",
+        example="admin12345"
+    )
+    new_password: str = Field(
+        ...,
+        title="New password",
+        description="New password authenticated user",
+        example="admin1234"
+    )
+    repeat_new_password: str = Field(
+        ...,
+        title="Repeat new password",
+        description="Repeat new password authenticated user",
+        example="admin1234"
+    )
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "old_password": "admin12345",
+                "new_password": "admin1234",
+                "repeat_new_password": "admin1234",
+            }
+        }
