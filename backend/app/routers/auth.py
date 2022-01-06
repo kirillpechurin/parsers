@@ -5,7 +5,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from app.dependences.auth import get_current_account
 from app.models.auth import AuthRegisterData, Account, AuthLoginData, AuthToken, ForgotPasswordData, \
-    AuthResetPasswordData
+    AuthResetPasswordData, PatchAccountData
 from app.models.responses.wrap import WrapModel
 from src.biz.exceptions.custom import ValidationError, InternalError
 from src.biz.services.auth_services.auth import AuthService
@@ -380,3 +380,41 @@ async def get_account(
         account: Account = Depends(get_current_account)
 ):
     return WrapModel(data=account)
+
+
+@auth_router.patch(
+    "/me/update",
+    summary="Обновление информации о пользователе",
+    description="Частичное обновление информации о пользователе",
+    status_code=status.HTTP_200_OK,
+    response_description="Успешно обновлено",
+    response_model=WrapModel,
+    responses={
+        "422": {
+            "description": "Некорректный токен",
+            "content": {
+                "application/json": {
+                    "example": ValidationError("Authentication credentials is not valid").exc_object
+                }
+            }
+        },
+        "42201": {
+            "description": "Адрес электронной почты уже используется",
+            "content": {
+                "application/json": {
+                    "example": ValidationError("Address already use").exc_object
+                }
+            }
+        }
+    }
+)
+async def update_account(
+        patch_account_data: PatchAccountData,
+        account: Account = Depends(get_current_account)
+):
+    if account.email != patch_account_data.email and patch_account_data.email:
+        AuthService().update_email(account.account_id, patch_account_data.email)
+    AuthService().update_account_info(account_id=account.account_id,
+                                      first_name=patch_account_data.first_name,
+                                      last_name=patch_account_data.last_name)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

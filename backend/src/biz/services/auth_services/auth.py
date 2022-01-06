@@ -112,3 +112,29 @@ class AuthService(BaseService):
                 "$set": {"password": self.create_hash_password(password)}
             }
         )
+
+    def update_email(self, account_id: str, email: EmailStr) -> Optional[None]:
+        if self.check_on_email(email):
+            raise ValidationError("Address already use")
+        self.collection.update_one({"_id": ObjectId(account_id)},
+                                   {"$set": {"email": email,
+                                             "confirmed": False}})
+        self.send_confirmation_link(account_id, email)
+
+    def update_account_info(self, account_id: str, first_name: str, last_name: str) -> None:
+        if not isinstance(first_name, str) and not isinstance(last_name, str):
+            return None
+
+        self.collection.update_one(
+            {"_id": ObjectId(account_id)},
+            {
+                "$set": {
+                    "first_name": first_name,
+                    "last_name": last_name
+                } if isinstance(first_name, str) and isinstance(last_name, str) else {
+                    "first_name": first_name
+                } if isinstance(first_name, str) else {
+                    "last_name": last_name
+                }
+            }
+        )
