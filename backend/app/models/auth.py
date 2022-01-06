@@ -2,11 +2,24 @@ import datetime
 
 from pydantic import EmailStr, BaseModel
 
+from src.biz.services.auth_services.token import TOKEN_LIFETIME_SECONDS
+
 
 class AuthRegisterData(BaseModel):
     email: EmailStr
     password: str
     repeat_password: str
+
+
+class AuthLoginData(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class AuthToken(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    expires_in: int = TOKEN_LIFETIME_SECONDS
 
 
 class Account(BaseModel):

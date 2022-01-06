@@ -1,7 +1,8 @@
 from fastapi import APIRouter
 
-from app.models.auth import AuthRegisterData, Account
+from app.models.auth import AuthRegisterData, Account, AuthLoginData, AuthToken
 from src.biz.services.auth_services.auth import AuthService
+from src.biz.services.auth_services.token import JWTService
 
 auth_router = APIRouter(
     prefix="/auth",
@@ -18,4 +19,19 @@ async def signup(auth_data: AuthRegisterData):
     )
     return {
         "data": account
+    }
+
+
+@auth_router.post('/login')
+async def login(auth_login_data: AuthLoginData):
+    account = AuthService().get_account(
+        email=auth_login_data.email,
+        password=auth_login_data.password
+    )
+    access_token = JWTService.create_token(account.account_id)
+    return {
+        "data": AuthToken(
+            access_token=access_token,
+            token_type="bearer"
+        )
     }
