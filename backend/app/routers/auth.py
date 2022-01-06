@@ -154,3 +154,41 @@ async def check_token(auth_token: AuthToken):
     return WrapModel(data={
         "status": True
     })
+
+
+@auth_router.post(
+    "/confirm/{account_id}",
+    summary="Подтверждение email",
+    description="Подтверждение email по ссылке, отправленной на почту",
+    status_code=status.HTTP_204_NO_CONTENT,
+    response_description="Успешно подтвержден",
+    responses={
+        "422": {
+            "content": {
+                "application/json": {
+                    "example": ValidationError("Account with such id was not found").exc_object
+                }
+            }
+        },
+        "42201": {
+            "content": {
+                "application/json": {
+                    "example": ValidationError("Already confirmed").exc_object
+                }
+            }
+        }
+    }
+)
+async def confirm_email(
+        account_id: str = Path(...,
+                               title="Account id параметр",
+                               description="Account id параметр для подтверждения email. "
+                                           "Это ObjectId mongodb параметр, приведенный к строке",
+                               min_length=24,
+                               max_length=24)
+):
+    account = AuthService().get_by_id(account_id)
+    if account.confirmed:
+        raise ValidationError("Already confirmed")
+    AuthService().confirm_account(account_id=account_id)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

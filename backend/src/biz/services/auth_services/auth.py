@@ -83,3 +83,6 @@ class AuthService(BaseService):
         if not obj_account:
             raise ValidationError("Account with such id was not found")
         return Account.parse_obj(obj_account)
+
+    def confirm_account(self, account_id: str) -> None:
+        self.collection.update_one({"_id": ObjectId(account_id)}, {"$set": {"confirmed": True}})
