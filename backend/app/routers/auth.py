@@ -1,6 +1,6 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Path
 from fastapi import status
-
+from fastapi.responses import Response
 from app.models.auth import AuthRegisterData, Account, AuthLoginData, AuthToken
 from app.models.responses.wrap import WrapModel
 from src.biz.exceptions.custom import ValidationError, InternalError
@@ -116,7 +116,37 @@ async def login(auth_login_data: AuthLoginData):
 
 
 @auth_router.post(
-    "/check_token"
+    "/check_token",
+    summary="Проверка токена",
+    description="Проверка токена через поиск пользователя",
+    status_code=status.HTTP_200_OK,
+    response_model=WrapModel,
+    response_description="Токен валидный",
+    responses={
+        "200": {
+            "content": {
+                "application/json": {
+                    "example": WrapModel(data={"status": True})
+                }
+            }
+        },
+        "422": {
+            "description": "",
+            "content": {
+                "application/json": {
+                    "example": ValidationError("Authentication credentials is not valid").exc_object
+                }
+            }
+        },
+        "42201": {
+            "description": "",
+            "content": {
+                "application/json": {
+                    "example": ValidationError("Account with such id was not found").exc_object
+                }
+            }
+        }
+    }
 )
 async def check_token(auth_token: AuthToken):
     account_id = JWTService.decode_token(auth_token.access_token)
