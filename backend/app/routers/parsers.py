@@ -9,6 +9,8 @@ from app.models.parsers import Order, TypeParser
 from app.models.responses.wrap import WrapModel
 from src.biz.services.parsers_services.map_service import MapService
 
+from src.biz.services.parsers_services.maps.map_order import MapOrderService
+
 parser_router = APIRouter(
     prefix="/parsers",
     tags=['parsers'],
