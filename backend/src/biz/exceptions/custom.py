@@ -25,3 +25,13 @@ class InternalError(APIException):
             "detail": "internal error. Please, try again later"
         }
         self.status_code = 500
+
+
+class NotFoundError(APIException):
+
+    def __init__(self, detail: str = "Not Found"):
+        self.exc_object = {
+            "code": "not_found",
+            "detail": detail
+        }
+        self.status_code = 404
