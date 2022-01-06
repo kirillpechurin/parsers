@@ -1,0 +1,73 @@
+{
+  "maps": [
+    {
+      "name": "yandex",
+      "correct": true,
+      "link": "https://yandex.ru/maps",
+      "image_link": "images/maps/yandex_maps.jpg",
+      "available": true
+    },
+    {
+      "name": "google",
+      "correct": false,
+      "link": "https://www.google.ru/maps",
+      "image_link": "images/maps/google_maps.png",
+      "available": true
+    },
+    {
+      "name": "2gis",
+      "correct": true,
+      "link": "https://2gis.ru",
+      "image_link": "images/maps/two_gis.jpg",
+      "available": true
+    }
+  ],
+  "examples": [
+    {
+      "type": "maps",
+      "examples": {
+        "json": {
+          "data": {
+            "address1": [
+              {
+                "name": "name",
+                "text_review": "text_review"
+              }
+            ],
+            "address2": [
+              {
+                "name": "name",
+                "text_review": "text_review"
+              }
+            ]
+          }
+        },
+        "html": {
+          "data": {
+            "review": "<div class=\"col-md-9 mb-3\">\n\t<h5 class=\"mt-3\">\n\t\tИмя: Name Surname\n\t</h5>\n\t<h5 class=\"mt-3\">\n\t\tДата: 2020-01-01\n\t</h5>\n\t<h5 class=\"mt-3\">\n\t\tОценка: 1\n\t</h5>\n\t<h5 class=\"mt-3\">\n\t\tТекст: Text\n\t</h5>\n</div>\n<hr/>"
+          }
+        }
+      }
+    }
+  ],
+  "cities": [
+    {
+      "name": "Пермь"
+    },
+    {
+      "name": "Москва"
+    },
+    {
+      "name": "Казань"
+    },
+    {
+      "name": "Санкт-Петербург"
+    },
+    {
+      "name": "Волгоград"
+    },
+    {
+      "name": "Нижний Новгород"
+    }
+  ]
+}
