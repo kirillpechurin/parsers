@@ -91,3 +91,13 @@ def reset_password(account_id):
         flash("Пароль успешно обновлен")
         return redirect(url_for("account.login"))
     return render_template("account/reset_password.html", account_id=account_id)
+
+
+@account.route('/personal_office', methods=["GET", "POST"])
+@authorization_required
+def personal_office(auth_token):
+    detail_account, errors = AccountService.get_detail(x_token=auth_token)
+    if errors:
+        flash(errors)
+        return redirect(url_for("parsers.index"))
+    return render_template("account/personal_office.html", account=detail_account)

@@ -48,3 +48,10 @@ class AccountService:
         if response.status_code != 204:
             return None, response.json()['detail']
         return None, None
+
+    @staticmethod
+    def get_detail(x_token):
+        response = RequestService.get_auth("/auth/me", x_token)
+        if response.status_code != 200:
+            return None, response.json()['detail']
+        return response.json()['data'], None
