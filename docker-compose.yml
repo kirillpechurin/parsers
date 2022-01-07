@@ -58,7 +58,7 @@ services:
       context: ./backend
     env_file:
       - backend/.env.backend
-    command: celery -A src.cel.tasks worker --loglevel=info
+    command: celery -A src.cel.celery worker --loglevel=info
     volumes:
       - ./backend:/backend/
     depends_on:

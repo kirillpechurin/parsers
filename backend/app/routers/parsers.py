@@ -250,7 +250,6 @@ async def detail_order(
 
 @parser_router.delete(
     "/orders/{order_id}",
-    response_model=WrapModel,
     summary="Удалить заказ",
     description="Удалить заказ по id",
     response_description="Заказ успешно удален",

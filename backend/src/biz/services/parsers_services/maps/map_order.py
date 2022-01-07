@@ -1,6 +1,6 @@
 from typing import Dict
 
-from src.cel.tasks import map_parser_task
+from src.cel.tasks.map_parser import map_parser_task
 
 from app.models.auth import Account
 from app.models.parsers import Order, DetailOrder, MapReviews

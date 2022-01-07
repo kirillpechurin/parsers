@@ -1,5 +1,4 @@
 from typing import List
-from src.biz.exceptions.custom import InternalError
 
 from .utils import get_connection
 
@@ -27,4 +26,4 @@ class MailService:
                 contents=contents
             )
         except Exception:
-            raise InternalError
+            pass
