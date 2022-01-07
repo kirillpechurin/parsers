@@ -2,11 +2,11 @@ import os
 
 from celery import Celery
 
-from src.cel.utils import get_map_by_name, get_driver
-
 from src.biz.services.parsers_services.orders import OrderService
-
 from src.biz.services.parsers_services.maps.map_reviews import MapReviewsService
+
+from .utils import get_map_by_name, get_driver
+
 
 app = Celery("tasks", backend='rpc://', broker="amqp://guest:guest@rabbitmq:5672//")
 DIRECTORY_STORAGE_MAPS_RESULT = "storage/parsers/maps/"
@@ -18,10 +18,10 @@ def map_parser_task(map_name, data: dict, order_id: str):
     driver, display = get_driver()
     reviews, html_filename = instance_class(driver=driver, data=data).find()
     display.stop()
-    OrderService().update_status_order(order_id)
     if not reviews or not html_filename:
         return "Failed parsing review from {}".format(map_name)
 
+    OrderService().update_status_order(order_id)
     new_html_filename = DIRECTORY_STORAGE_MAPS_RESULT + html_filename.split("/")[-1]
     os.replace(html_filename, new_html_filename)
 

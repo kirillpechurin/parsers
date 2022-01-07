@@ -36,7 +36,7 @@ handbooks_router = APIRouter(
         404: {
             "content": {
                 "application/json": {
-                    "example": NotFoundError("Cities not found").exc
+                    "example": NotFoundError("Cities not found").exc_object
                 }
             }
         }
@@ -89,7 +89,7 @@ async def list_cities():
         404: {
             "content": {
                 "application/json": {
-                    "example": NotFoundError("Cities not found").exc
+                    "example": NotFoundError("Cities not found").exc_object
                 }
             }
         }
