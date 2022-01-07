@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if data.type == "maps" %}
+<div class="row">
+    <div class="title">
+        <h3>Карты</h3>
+    </div>
+    <hr>
+    <div class="col-md-4 d-flex justify-content-center align-items-center">
+        <h5 class="">JSON</h5>
+    </div>
+    <div class="col-md-8">
+        <div class="bg-light">
+<pre>
+<code>
+    { {% for address, reviews in data.examples.json.data.items() %}
+        '{{address}}': [{% for review in reviews %}
+            { {% for key, value in review.items() %}
+                '{{key}}': '{{value}}'{% endfor %}
+            }
+        {% endfor %}]
+    {% endfor %} }
+</code>
+</pre>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4 d-flex justify-content-center align-items-center">
+        <h5 class="">HTML</h5>
+    </div>
+    <div class="col-md-8">
+        <div class="bg-light">
+<pre>
+<code>
+{{ data.examples.html.data.review }}
+</code>
+</pre>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock content %}

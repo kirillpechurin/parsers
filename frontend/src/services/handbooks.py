@@ -2,7 +2,7 @@ from src.services.request_service import RequestService
 
 BASE_PREFIX = "/handbooks"
 CITIES_PREFIX = BASE_PREFIX + "/cities"
-EXAMPLES_PREFIX = BASE_PREFIX + '/examples'
+EXAMPLES_PREFIX = BASE_PREFIX + '/examples/maps'
 
 
 class HandbookService:

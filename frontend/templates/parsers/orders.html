@@ -16,8 +16,8 @@
             <div class="row">
                 <div class="d-flex flex-row-reverse">
                     {% if order.result %}
-                        <a class="btn btn-info m-1" href="{{ url_for('parsers.order_detail', order_id=order.id) }}">Посмотреть результаты</a>
-                        <a class="btn btn-success m-1" href="{{ order.result.html_filename }}" download>
+                        <a class="btn btn-info m-1" href="{{ url_for('parsers.order_detail', order_id=order.order_id) }}">Посмотреть результаты</a>
+                        <a class="btn btn-success m-1" href="/{{ order.result.html_filename }}" download>
                             Скачать файл
                         </a>
                     {% endif %}

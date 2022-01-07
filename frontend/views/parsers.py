@@ -14,6 +14,17 @@ def index(auth_token):
     return render_template("parsers/index.html")
 
 
+@parsers.route("/available_platforms")
+@authorization_required
+def available_platforms(auth_token):
+    data, errors = ParserService.get_available_platforms(auth_token)
+    if errors:
+        flash(errors)
+        return redirect(url_for("parsers.index"))
+    maps = data['maps']
+    return render_template("parsers/available_platforms.html", maps=maps)
+
+
 @parsers.route('/order')
 @authorization_required
 def make_order(auth_token):
@@ -46,7 +57,7 @@ def make_order_maps(auth_token, map_name):
             return render_template("parsers/make_order_maps.html", map_name=map_name)
 
         if data.get("status"):
-            flash_message = "Заказ успешно создан.\n Уведомим, как только будет готово"
+            flash_message = "Заказ успешно создан."
         else:
             flash_message = 'Ошибка при создании заказа.'
         flash(flash_message)
@@ -93,4 +104,4 @@ def examples():
     if errors:
         flash(errors)
         return redirect(url_for("parsers.index"))
-    return render_template("examples.html", data=response)
+    return render_template("parsers/examples.html", data=response)
