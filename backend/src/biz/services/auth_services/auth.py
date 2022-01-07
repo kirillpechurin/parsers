@@ -12,6 +12,7 @@ from src.biz.services.base_service import BaseService
 from src.biz.services.mail.sender import MailService
 
 from src.biz.exceptions.enums import ExceptionEnum
+from src.cel.tasks import send_on_email
 
 
 class AuthService(BaseService):
@@ -73,10 +74,9 @@ class AuthService(BaseService):
         :return: None
         """
         link = f"http://url/{account_id}"
-        MailService().send(to=email,
-                           subject="Confirm account",
-                           contents=[f"Перейдите по ссылке для подтверждения. \n\n {link}"]
-                           )
+        subject = "Подтверждение аккаунта"
+        body = f"""Перейдите по ссылке для подтверждения. <a href="{link}">Подтвердить аккаунт</a>"""
+        send_on_email.delay(email, subject, body)
 
     def create_account(self, email: EmailStr, password: str, repeat_password: str) -> Optional[Account]:
         """
@@ -176,11 +176,9 @@ class AuthService(BaseService):
         :return: None
         """
         link = f"http://url/{account_id}"
-        MailService().send(
-            to=email,
-            subject="Reset password link",
-            contents=[f"Перейдите по ссылке для сброса пароля.\n\n {link}"]
-        )
+        subject = "Восстановление пароля"
+        body = f"""Перейдите по ссылке для сброса пароля. \n\n <a href="{link}">Сбросить пароль</a>"""
+        send_on_email.delay(email, subject, body)
 
     def update_password(self, account_id: str, password: str, repeat_password: str) -> None:
         """
