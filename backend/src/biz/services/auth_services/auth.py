@@ -3,6 +3,7 @@ import hashlib
 from typing import Optional, Union
 
 import pytz
+from bson import ObjectId
 from pydantic import EmailStr
 
 from app.models.auth import Account
@@ -76,3 +77,64 @@ class AuthService(BaseService):
     def get_account(self, email: EmailStr, password: str) -> Account:
         account = self.check_by_auth_data(email, password)
         return account
+
+    def get_by_id(self, account_id: str) -> Optional[Account]:
+        obj_account = self.collection.find_one({"_id": ObjectId(account_id)})
+        if not obj_account:
+            raise ValidationError("Account with such id was not found")
+        return Account.parse_obj(obj_account)
+
+    def confirm_account(self, account_id: str) -> None:
+        self.collection.update_one({"_id": ObjectId(account_id)}, {"$set": {"confirmed": True}})
+
+    def get_by_email(self, email: EmailStr) -> Optional[Account]:
+        obj_account = self.collection.find_one({"email": email})
+        if not obj_account:
+            raise ValidationError("Account with such email was not found")
+        return Account.parse_obj(obj_account)
+
+    @staticmethod
+    def send_forgot_link(account_id: str, email: EmailStr) -> None:
+        link = f"http://url/{account_id}"
+        MailService().send(
+            to=email,
+            subject="Reset password link",
+            contents=[f"Перейдите по ссылке для сброса пароля.\n\n {link}"]
+        )
+
+    def update_password(self, account_id: str, password: str, repeat_password: str) -> None:
+        self.check_password(password, repeat_password)
+        self.collection.update_one(
+            {
+                "_id": ObjectId(account_id)
+            },
+            {
+                "$set": {"password": self.create_hash_password(password)}
+            }
+        )
+
+    def update_email(self, account_id: str, email: EmailStr) -> Optional[None]:
+        if self.check_on_email(email):
+            raise ValidationError("Address already use")
+        self.collection.update_one({"_id": ObjectId(account_id)},
+                                   {"$set": {"email": email,
+                                             "confirmed": False}})
+        self.send_confirmation_link(account_id, email)
+
+    def update_account_info(self, account_id: str, first_name: str, last_name: str) -> None:
+        if not isinstance(first_name, str) and not isinstance(last_name, str):
+            return None
+
+        self.collection.update_one(
+            {"_id": ObjectId(account_id)},
+            {
+                "$set": {
+                    "first_name": first_name,
+                    "last_name": last_name
+                } if isinstance(first_name, str) and isinstance(last_name, str) else {
+                    "first_name": first_name
+                } if isinstance(first_name, str) else {
+                    "last_name": last_name
+                }
+            }
+        )

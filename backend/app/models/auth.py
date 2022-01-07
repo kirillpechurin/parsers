@@ -1,4 +1,5 @@
 import datetime
+from typing import Optional
 
 import pytz
 from pydantic import EmailStr, BaseModel, Field
@@ -146,3 +147,79 @@ class Account(BaseModel):
             data["account_id"] = str(obj.pop("_id"))
         data.update(obj)
         return super(Account, cls).parse_obj(data)
+
+
+class ForgotPasswordData(BaseModel):
+    email: EmailStr = Field(
+        ...,
+        title="Email user",
+        description="Confirm E-mail address user",
+        example="email@gmail.com"
+    )
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "email": "example@gmail.com",
+            }
+        }
+
+
+class AuthResetPasswordData(BaseModel):
+    old_password: str = Field(
+        ...,
+        title="Old Password",
+        description="Old password authenticated user",
+        example="admin12345"
+    )
+    new_password: str = Field(
+        ...,
+        title="New password",
+        description="New password authenticated user",
+        example="admin1234"
+    )
+    repeat_new_password: str = Field(
+        ...,
+        title="Repeat new password",
+        description="Repeat new password authenticated user",
+        example="admin1234"
+    )
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "old_password": "admin12345",
+                "new_password": "admin1234",
+                "repeat_new_password": "admin1234",
+            }
+        }
+
+
+class PatchAccountData(BaseModel):
+    email: Optional[EmailStr] = Field(
+        None,
+        title="New E-mail address",
+        description="New E-mail address. User need again confirm it",
+        example="new_email@gmail.com"
+    )
+    first_name: Optional[str] = Field(
+        None,
+        title="First name user",
+        description="First name user, may be ''",
+        example="Firstname"
+    )
+    last_name: Optional[str] = Field(
+        None,
+        title="Last name user",
+        description="Last name user, may be ''",
+        example="Lastname"
+    )
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "email": "new_email@gmail.com",
+                "first_name": "Firstname",
+                "last_name": "Lastname",
+            }
+        }
