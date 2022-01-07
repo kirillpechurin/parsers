@@ -14,3 +14,9 @@ class Server:
         cls.app: FastAPI
         for router in routers:
             cls.app.include_router(router)
+
+    @classmethod
+    def set_exception_handlers(cls, handlers):
+        cls.app: FastAPI
+        for handler, exception_class in handlers:
+            cls.app.add_exception_handler(exception_class, handler)
