@@ -1,0 +1,67 @@
+version: "3"
+
+services:
+
+  frontend:
+    restart: always
+    container_name: ds-parsers-frontend
+    build:
+      context: ./frontend
+    env_file:
+      - ./frontend/.env.frontend
+    volumes:
+      - ./frontend:/frontend/
+    ports:
+      - "5000:5000"
+
+  mongodb:
+    image: mongo
+    container_name: ds-parsers-mongodb
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_DB_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_DB_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGO_DB_NAME}
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - ds_mongodb_data:/var/lib/mongodb/data/
+      - ./mongodb/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    ports:
+      - "27017:27017"
+    restart: always
+
+  backend:
+    restart: always
+    container_name: ds-parsers-backend
+    build:
+      context: ./backend
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./backend:/backend/
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongodb
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: ds-parsers-rabbitmq
+    ports:
+      - "5672:5672"
+
+  celery:
+    restart: always
+    container_name: ds-parsers-celery
+    build:
+      context: ./backend
+    command: celery -A src.cel.tasks worker --loglevel=info
+    volumes:
+      - ./backend:/backend/
+    depends_on:
+      - backend
+      - rabbitmq
+    links:
+      - rabbitmq:rabbitmq
+
+volumes:
+  ds_mongodb_data:
