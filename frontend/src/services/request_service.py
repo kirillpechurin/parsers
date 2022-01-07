@@ -20,3 +20,7 @@ class RequestService:
     @staticmethod
     def patch_auth(url, x_token, data):
         return requests.patch(API_SERVER + url, data=json.dumps(data), headers={HEADER_TOKEN: TOKEN.format(x_token)})
+
+    @staticmethod
+    def post_auth(url, x_token, data):
+        return requests.post(API_SERVER + url, data=json.dumps(data), headers={HEADER_TOKEN: TOKEN.format(x_token)})

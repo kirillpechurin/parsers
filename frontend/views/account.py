@@ -122,3 +122,18 @@ def update_account_info(auth_token):
     if errors:
         flash(errors)
     return redirect(url_for("account.personal_office"))
+
+
+@account.route('/personal_office/update_password', methods=["POST"])
+@authorization_required
+def reset_password_auth(auth_token):
+    data = {
+        'old_password': request.form.get("old_password"),
+        "new_password": request.form.get("new_password"),
+        "repeat_new_password": request.form.get("repeat_new_password"),
+    }
+
+    _, errors = AccountService.update_password(data=data, x_token=auth_token)
+    if errors:
+        flash(errors)
+    return redirect(url_for("account.personal_office"))
