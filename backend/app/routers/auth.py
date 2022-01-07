@@ -2,6 +2,7 @@ from fastapi import APIRouter, Path, Depends
 from fastapi import status
 from fastapi.responses import Response
 from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.requests import Request
 
 from app.dependences.auth import get_current_account
 from app.models.auth import AuthRegisterData, Account, AuthLoginData, AuthToken, ForgotPasswordData, \
@@ -68,11 +69,12 @@ auth_router = APIRouter(
         }
     }
 )
-async def signup(auth_data: AuthRegisterData):
+async def signup(request: Request, auth_data: AuthRegisterData):
     account = AuthService().create_account(
         email=auth_data.email,
         password=auth_data.password,
-        repeat_password=auth_data.repeat_password
+        repeat_password=auth_data.repeat_password,
+        origin_server=request.headers.get("Origin")
     )
     return WrapModel(data=account)
 
@@ -227,12 +229,12 @@ async def confirm_email(
         },
     }
 )
-async def forgot_password(forgot_password_data: ForgotPasswordData):
+async def forgot_password(request: Request, forgot_password_data: ForgotPasswordData):
     email = forgot_password_data.email
     account = AuthService().get_by_email(email)
     if not account.confirmed:
         raise ValidationError(ExceptionEnum.account_not_confirmed)
-    AuthService.send_forgot_link(account.account_id, account.email)
+    AuthService.send_forgot_link(account.account_id, account.email, origin_server=request.headers.get("Origin"))
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 

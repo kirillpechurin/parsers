@@ -63,21 +63,22 @@ class AuthService(BaseService):
             raise ValidationError(ExceptionEnum.length_password_lt)
 
     @staticmethod
-    def send_confirmation_link(account_id: str, email: EmailStr) -> None:
+    def send_confirmation_link(account_id: str, email: EmailStr, origin_server: str) -> None:
         """
         Отправляет письмо с подтверждением на email
 
         Генерирует ссылку и отправляет ее
         :param account_id: id аккаунта
         :param email: email аккаунта
+        :param origin_server: Клиент
         :return: None
         """
-        link = f"http://url/{account_id}"
+        link = f"{origin_server}/confirm_email/{account_id}"
         subject = "Подтверждение аккаунта"
         body = f"""Перейдите по ссылке для подтверждения. <a href="{link}">Подтвердить аккаунт</a>"""
         send_on_email.delay(email, subject, body)
 
-    def create_account(self, email: EmailStr, password: str, repeat_password: str) -> Optional[Account]:
+    def create_account(self, email: EmailStr, password: str, repeat_password: str, origin_server: str) -> Optional[Account]:
         """
         Создание аккаунта
 
@@ -86,6 +87,7 @@ class AuthService(BaseService):
         :param email: email
         :param password: исходный пароль
         :param repeat_password: повторение исходного пароля
+        :param origin_server: Клиент
         :return: Account
         """
         exists = self.check_on_email(email)
@@ -103,7 +105,7 @@ class AuthService(BaseService):
             "created_at": created_at
         })
         account_id = str(new_account.inserted_id)
-        self.send_confirmation_link(account_id, email)
+        self.send_confirmation_link(account_id, email, origin_server)
         return Account.parse_obj({"account_id": account_id,
                                   "email": email,
                                   "created_at": created_at})
@@ -166,15 +168,16 @@ class AuthService(BaseService):
         return Account.parse_obj(obj_account)
 
     @staticmethod
-    def send_forgot_link(account_id: str, email: EmailStr) -> None:
+    def send_forgot_link(account_id: str, email: EmailStr, origin_server: str) -> None:
         """
         Отправить ссылку на восстановление пароля
 
         :param account_id: string id аккаунта
         :param email: email аккаунта
+        :param origin_server: Клиент
         :return: None
         """
-        link = f"http://url/{account_id}"
+        link = f"{origin_server}/reset_password/{account_id}"
         subject = "Восстановление пароля"
         body = f"""Перейдите по ссылке для сброса пароля. \n\n <a href="{link}">Сбросить пароль</a>"""
         send_on_email.delay(email, subject, body)
