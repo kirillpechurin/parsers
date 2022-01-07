@@ -55,3 +55,10 @@ class AccountService:
         if response.status_code != 200:
             return None, response.json()['detail']
         return response.json()['data'], None
+
+    @staticmethod
+    def update_account(data, x_token):
+        response = RequestService.patch_auth('/auth/me/update', data=data, x_token=x_token)
+        if response.status_code != 204:
+            return None, response.json()['detail']
+        return None, None

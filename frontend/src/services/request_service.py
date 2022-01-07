@@ -16,3 +16,7 @@ class RequestService:
     @staticmethod
     def get_auth(url, x_token, params=None):
         return requests.get(API_SERVER + url, params=params, headers={HEADER_TOKEN: TOKEN.format(x_token)})
+
+    @staticmethod
+    def patch_auth(url, x_token, data):
+        return requests.patch(API_SERVER + url, data=json.dumps(data), headers={HEADER_TOKEN: TOKEN.format(x_token)})

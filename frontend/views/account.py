@@ -101,3 +101,24 @@ def personal_office(auth_token):
         flash(errors)
         return redirect(url_for("parsers.index"))
     return render_template("account/personal_office.html", account=detail_account)
+
+
+@account.route('/personal_office/update_account', methods=['POST'])
+@authorization_required
+def update_account_info(auth_token):
+    detail_account, errors = AccountService.get_detail(x_token=auth_token)
+    if errors:
+        flash(errors)
+        return redirect(url_for("account.personal_office"))
+    data = {
+        "email": request.form.get('email'),
+    }
+    if request.form.get("first_name") != detail_account.get('first_name'):
+        data['first_name'] = request.form.get("first_name")
+    if request.form.get("last_name") != detail_account.get("last_name"):
+        data['last_name'] = request.form.get("last_name")
+
+    _, errors = AccountService.update_account(data=data, x_token=auth_token)
+    if errors:
+        flash(errors)
+    return redirect(url_for("account.personal_office"))
