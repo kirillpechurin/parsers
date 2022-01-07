@@ -12,6 +12,8 @@ from src.biz.services.parsers_services.maps.map_service import MapService
 
 from src.biz.services.parsers_services.maps.map_order import MapOrderService
 
+from src.biz.services.parsers_services.orders import OrderService
+
 parser_router = APIRouter(
     prefix="/parsers",
     tags=['parsers'],
@@ -110,3 +112,48 @@ async def make_order(order: Order, account: Account = Depends(get_current_accoun
         status_start = MapOrderService().start_order(order, account)
         return WrapModel(data={"status": status_start})
     raise NotFoundError(detail="type parser not found")
+
+
+@parser_router.get(
+    "/orders",
+    response_model=WrapModel,
+    status_code=status.HTTP_200_OK,
+    summary="Посмотреть все заказы",
+    description="Посмотреть все созданные выполненные заказы",
+    response_description="Вывод всех заказов",
+    responses={
+        200: {
+            "content": {
+                "application/json": {
+                    "example": {
+                        "data": [
+                            {
+                                "id": "order_id",
+                                "data": {"city": "city", "organisation": "organisation"},
+                                "created_at": "created_at",
+                                "result": {
+                                    "html_filename": "html_filename",
+                                    "data": [
+                                        {'address': [{}]}
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+
+    }
+)
+async def orders(account: Account = Depends(get_current_account)):
+    user_orders = OrderService().get_by_email(account.email)
+    data = []
+    for order in user_orders:
+        order_model = Order.parse_obj(order.get("data"))
+        if order_model.parser.type == TypeParser.maps.value:
+            detail_order_model = MapOrderService.create_detail_order(order_model, order)
+            data.append(detail_order_model)
+    return WrapModel(
+        data=data
+    )
