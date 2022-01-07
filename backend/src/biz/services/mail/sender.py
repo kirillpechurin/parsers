@@ -1,26 +1,16 @@
-import os
 from typing import List
-
-import yagmail
-
 from src.biz.exceptions.custom import InternalError
+
+from .utils import get_connection
 
 
 class MailService:
 
-    def get_connection(self) -> yagmail.SMTP:
-        """
-        Получить соединение по smtp
-
-        :return: yagmail.SMTP
-        """
-        return yagmail.SMTP(os.environ.get("MAIL_SENDER_NAME"), os.environ.get("MAIL_SENDER_PASSWORD"))
-
-    def send(self,
-             to: str,
+    @staticmethod
+    def send(to: str,
              subject: str,
              contents: List[str]
-             ):
+             ) -> None:
         """
         Отправить сообщение
 
@@ -30,7 +20,7 @@ class MailService:
         :return: None
         """
         try:
-            connection = self.get_connection()
+            connection = get_connection()
             connection.send(
                 to=to,
                 subject=subject,
