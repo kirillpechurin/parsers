@@ -22,7 +22,8 @@ def map_parser_task(map_name, data: dict, order_id: str):
     OrderService().update_status_order(order_id)
     new_html_filename = DIRECTORY_STORAGE_MAPS_RESULT + html_filename.split("/")[-1]
     os.replace(html_filename, new_html_filename)
-
+    new_html_filename.replace("storage/", "")
+    print(new_html_filename)
     MapReviewsService().save_reviews(data=reviews, html_filename=new_html_filename, order_id=order_id)
 
     return "Success parsing review from {}".format(map_name)
