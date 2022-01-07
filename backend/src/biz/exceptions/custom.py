@@ -1,3 +1,6 @@
+import os
+
+from src.cel.tasks import send_on_email
 
 
 class APIException(Exception):
@@ -27,12 +30,21 @@ class InternalError(APIException):
     """
     Пользовательское исключение внутренней ошибки
     """
-    def __init__(self):
+    default_detail = "Внутренняя ошибка. Пожалуйста, попробуйте позже"
+
+    def __init__(self, message=None):
         self.exc_object = {
             "code": "internal_error",
-            "detail": "Внутренняя ошибка. Пожалуйста, попробуйте позже"
+            "detail": self.default_detail
         }
         self.status_code = 500
+        self.send_to_admin(message)
+
+    def send_to_admin(self, message):
+        email = os.environ.get("ADMIN_EMAIL")
+        subject = "Внутренняя ошибка"
+        body = message if message else self.default_detail
+        send_on_email.delay(email, subject, body)
 
 
 class NotFoundError(APIException):
