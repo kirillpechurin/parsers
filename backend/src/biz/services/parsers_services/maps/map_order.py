@@ -1,8 +1,10 @@
 from src.cel.tasks import map_parser_task
 
 from app.models.auth import Account
-from app.models.parsers import Order
+from app.models.parsers import Order, DetailOrder, MapReviews
 from src.biz.services.parsers_services.orders import OrderService
+
+from src.biz.services.parsers_services.maps.map_reviews import MapReviewsService
 
 
 class MapOrderService:
@@ -32,3 +34,17 @@ class MapOrderService:
             order_id
         )
         return True
+
+    @staticmethod
+    def create_detail_order(order: Order, order_dict: dict):
+        order_id = str(order_dict.get('_id'))
+        review = MapReviewsService().get_by_order_id(order_id)
+        return DetailOrder(
+            order_id=order_id,
+            data=order,
+            created_at=order_dict.get("created_at"),
+            result=MapReviews(
+                html_filename=review.get("html_filename"),
+                data=review.get("data")
+            ) if review else None
+        )
