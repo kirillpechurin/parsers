@@ -2,6 +2,7 @@ from flask import Blueprint, request, url_for, render_template, flash, session
 from werkzeug.utils import redirect
 
 from src.services.account import AccountService
+from views.middlewares.auth import authorization_required
 
 account = Blueprint("account", __name__)
 
@@ -38,3 +39,11 @@ def login():
         return redirect(url_for("parsers.index"))
 
     return render_template("account/login.html")
+
+
+@account.route("/logout", methods=["POST"])
+@authorization_required
+def logout(auth_token):
+    if request.method == "POST":
+        session.pop("x_token")
+    return redirect(url_for("account.login"))
