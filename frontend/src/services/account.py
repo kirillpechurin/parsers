@@ -34,3 +34,10 @@ class AccountService:
         if response.status_code != 204:
             return None, response.json()['detail']
         return None, None
+
+    @staticmethod
+    def forgot_password(data):
+        response = RequestService.post("/auth/password/forgot", data=data)
+        if response.status_code != 204:
+            return None, response.json()['detail']
+        return None, None

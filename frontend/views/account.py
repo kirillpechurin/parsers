@@ -59,3 +59,18 @@ def confirm_email(account_id):
     if session['x_token']:
         return redirect(url_for("account.personal_office"))
     return redirect(url_for("account.login"))
+
+
+@account.route('/forgot_password', methods=["GET", "POST"])
+def forgot_password():
+    if request.method == 'POST':
+        data = {
+            'email': request.form.get("email")
+        }
+        _, errors = AccountService.forgot_password(data=data)
+        if errors:
+            flash(errors)
+            return render_template("account/forgot_password.html")
+        flash("Ссылка успешно отправлена")
+        return redirect(url_for("account.login"))
+    return render_template("account/forgot_password.html")
