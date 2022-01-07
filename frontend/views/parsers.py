@@ -76,3 +76,12 @@ def order_detail(auth_token, order_id):
         flash(errors)
         return redirect(url_for("parsers.index"))
     return render_template("parsers/detail_order.html", order=response)
+
+
+@parsers.route("/orders/<order_id>/delete", methods=["POST"])
+@authorization_required
+def delete_order(auth_token, order_id):
+    response, errors = ParserService.delete_order(order_id, x_token=auth_token)
+    if errors:
+        flash(errors)
+    return redirect(url_for("parsers.orders"))
