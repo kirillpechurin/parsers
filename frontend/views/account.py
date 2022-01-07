@@ -74,3 +74,20 @@ def forgot_password():
         flash("Ссылка успешно отправлена")
         return redirect(url_for("account.login"))
     return render_template("account/forgot_password.html")
+
+
+@account.route("/reset/<account_id>", methods=["GET", "POST"])
+def reset_password(account_id):
+    if request.method == "POST":
+        data = {
+            "password": request.form.get("password"),
+            "repeat_password": request.form.get("repeat_password"),
+            "email": request.form.get("email")
+        }
+        _, errors = AccountService.reset_password(account_id, data=data)
+        if errors:
+            flash(errors)
+            return render_template("account/reset_password.html")
+        flash("Пароль успешно обновлен")
+        return redirect(url_for("account.login"))
+    return render_template("account/reset_password.html", account_id=account_id)

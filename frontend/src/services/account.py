@@ -41,3 +41,10 @@ class AccountService:
         if response.status_code != 204:
             return None, response.json()['detail']
         return None, None
+
+    @staticmethod
+    def reset_password(account_id, data):
+        response = RequestService.post(f"/auth/password/reset/{account_id}", data=data)
+        if response.status_code != 204:
+            return None, response.json()['detail']
+        return None, None
