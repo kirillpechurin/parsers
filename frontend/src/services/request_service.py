@@ -10,6 +10,10 @@ TOKEN = "Bearer {}"
 class RequestService:
 
     @staticmethod
+    def get(url, params=None):
+        return requests.get(API_SERVER + url, params=params)
+
+    @staticmethod
     def post(url, data=None):
         return requests.post(API_SERVER + url, data=json.dumps(data))
 
