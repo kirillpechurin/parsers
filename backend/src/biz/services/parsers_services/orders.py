@@ -1,9 +1,8 @@
 from datetime import datetime
-
 import pytz
 from bson import ObjectId
-
 from src.biz.services.base_service import BaseService
+from src.biz.exceptions.custom import NotFoundError
 
 
 class OrderService(BaseService):
@@ -33,3 +32,14 @@ class OrderService(BaseService):
         )
         results = [result for result in results]
         return results
+
+    def delete_by_id(self, order_id: str):
+        self.get_by_id(order_id)
+        result = self.collection.delete_one({"_id": ObjectId(order_id)})
+        return True
+
+    def get_by_id(self, order_id: str):
+        order = self.collection.find_one({"_id": ObjectId(order_id)})
+        if not order:
+            raise NotFoundError(detail="Order not found")
+        return order
