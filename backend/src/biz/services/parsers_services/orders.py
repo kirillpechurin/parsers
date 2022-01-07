@@ -23,3 +23,13 @@ class OrderService(BaseService):
             "status_ready": False
         })
         return str(order.inserted_id)
+
+    def get_by_email(self, email):
+        results = self.collection.find(
+            {
+                "email": email,
+                "status_ready": True
+            }
+        )
+        results = [result for result in results]
+        return results

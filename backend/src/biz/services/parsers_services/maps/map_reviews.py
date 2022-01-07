@@ -16,3 +16,6 @@ class MapReviewsService(BaseService):
             }
         )
 
+    def get_by_order_id(self, order_id):
+        result = self.collection.find_one({"order_id": order_id})
+        return result
