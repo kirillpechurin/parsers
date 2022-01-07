@@ -11,6 +11,8 @@ from src.biz.exceptions.custom import InternalError, ValidationError
 from src.biz.services.base_service import BaseService
 from src.biz.services.mail.sender import MailService
 
+from src.biz.exceptions.enums import ExceptionEnum
+
 
 class AuthService(BaseService):
 
@@ -35,9 +37,9 @@ class AuthService(BaseService):
     @staticmethod
     def check_password(password: str, repeat_password: str) -> None:
         if password != repeat_password:
-            raise ValidationError("Passwords does not equal")
+            raise ValidationError(ExceptionEnum.password_not_equal)
         elif len(password) < 8:
-            raise ValidationError("Length password might be more than 8")
+            raise ValidationError(ExceptionEnum.length_password_lt)
 
     @staticmethod
     def send_confirmation_link(account_id: str, email: EmailStr) -> None:
@@ -50,7 +52,7 @@ class AuthService(BaseService):
     def create_account(self, email: EmailStr, password: str, repeat_password: str) -> Optional[Account]:
         exists = self.check_on_email(email)
         if exists:
-            raise ValidationError("Account with this email already exists")
+            raise ValidationError(ExceptionEnum.account_email_already_exists)
 
         self.check_password(password, repeat_password)
         created_at = datetime.datetime.now(tz=pytz.UTC)
@@ -71,7 +73,7 @@ class AuthService(BaseService):
     def check_by_auth_data(self, email: Union[EmailStr, str], password: str) -> Optional[Account]:
         account = self.collection.find_one({"email": email, "password": self.create_hash_password(password)})
         if not account:
-            raise ValidationError("Incorrect auth data")
+            raise ValidationError(ExceptionEnum.incorrect_auth_data)
         return Account.parse_obj(account)
 
     def get_account(self, email: EmailStr, password: str) -> Account:
@@ -81,7 +83,7 @@ class AuthService(BaseService):
     def get_by_id(self, account_id: str) -> Optional[Account]:
         obj_account = self.collection.find_one({"_id": ObjectId(account_id)})
         if not obj_account:
-            raise ValidationError("Account with such id was not found")
+            raise ValidationError(ExceptionEnum.account_by_id_not_found)
         return Account.parse_obj(obj_account)
 
     def confirm_account(self, account_id: str) -> None:
@@ -90,7 +92,7 @@ class AuthService(BaseService):
     def get_by_email(self, email: EmailStr) -> Optional[Account]:
         obj_account = self.collection.find_one({"email": email})
         if not obj_account:
-            raise ValidationError("Account with such email was not found")
+            raise ValidationError(ExceptionEnum.account_by_email_not_found)
         return Account.parse_obj(obj_account)
 
     @staticmethod
@@ -115,7 +117,7 @@ class AuthService(BaseService):
 
     def update_email(self, account_id: str, email: EmailStr) -> Optional[None]:
         if self.check_on_email(email):
-            raise ValidationError("Address already use")
+            raise ValidationError(ExceptionEnum.email_address_already_use)
         self.collection.update_one({"_id": ObjectId(account_id)},
                                    {"$set": {"email": email,
                                              "confirmed": False}})

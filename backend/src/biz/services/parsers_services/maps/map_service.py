@@ -2,6 +2,8 @@ from app.models.parsers import Map
 from src.biz.exceptions.custom import NotFoundError
 from src.biz.services.base_service import BaseService
 
+from src.biz.exceptions.enums import ExceptionEnum
+
 
 class MapService(BaseService):
 
@@ -13,7 +15,7 @@ class MapService(BaseService):
         results = self.collection.find({"available": True})
         results = [r for r in results]
         if not results:
-            raise NotFoundError("Maps not found!")
+            raise NotFoundError(ExceptionEnum.maps_not_found)
         data = []
         for result in results:
             data.append(

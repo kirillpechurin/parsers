@@ -1,6 +1,8 @@
 from src.biz.exceptions.custom import NotFoundError
 from src.biz.services.base_service import BaseService
 
+from src.biz.exceptions.enums import ExceptionEnum
+
 
 class CityService(BaseService):
 
@@ -12,5 +14,5 @@ class CityService(BaseService):
         results = self.collection.find()
         results = [r['name'] for r in results if r]
         if not results:
-            raise NotFoundError("Cities not found")
+            raise NotFoundError(ExceptionEnum.cities_not_found)
         return results

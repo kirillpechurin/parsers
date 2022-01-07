@@ -11,6 +11,8 @@ from src.biz.exceptions.custom import ValidationError, InternalError
 from src.biz.services.auth_services.auth import AuthService
 from src.biz.services.auth_services.token import JWTService
 
+from src.biz.exceptions.enums import ExceptionEnum
+
 auth_router = APIRouter(
     prefix="/auth",
     tags=["auth"],
@@ -36,7 +38,7 @@ auth_router = APIRouter(
             "description": "Аккаунт с таким email уже существует",
             "content": {
                 "application/json": {
-                    "example": ValidationError("Account with this email already exists").exc_object
+                    "example": ValidationError(ExceptionEnum.account_email_already_exists).exc_object
                 }
             }
         },
@@ -44,7 +46,7 @@ auth_router = APIRouter(
             "description": "Пароли не равны",
             "content": {
                 "application/json": {
-                    "example": ValidationError("Passwords does not equal").exc_object
+                    "example": ValidationError(ExceptionEnum.password_not_equal).exc_object
                 }
             }
         },
@@ -52,7 +54,7 @@ auth_router = APIRouter(
             "description": "Длина пароля меньше нужной",
             "content": {
                 "application/json": {
-                    "example": ValidationError("Length password might be more than 8").exc_object
+                    "example": ValidationError(ExceptionEnum.length_password_lt).exc_object
                 }
             }
         },
@@ -94,7 +96,7 @@ async def signup(auth_data: AuthRegisterData):
             "description": "Некорректные данные",
             "content": {
                 "application/json": {
-                    "example": ValidationError("Incorrect auth data").exc_object
+                    "example": ValidationError(ExceptionEnum.incorrect_auth_data).exc_object
                 }
             }
         },
@@ -138,7 +140,7 @@ async def login(auth_login_data: AuthLoginData):
             "description": "",
             "content": {
                 "application/json": {
-                    "example": ValidationError("Authentication credentials is not valid").exc_object
+                    "example": ValidationError(ExceptionEnum.authentication_credentials_is_not_valid).exc_object
                 }
             }
         },
@@ -146,7 +148,7 @@ async def login(auth_login_data: AuthLoginData):
             "description": "",
             "content": {
                 "application/json": {
-                    "example": ValidationError("Account with such id was not found").exc_object
+                    "example": ValidationError(ExceptionEnum.account_by_id_not_found).exc_object
                 }
             }
         }
@@ -170,14 +172,14 @@ async def check_token(auth_token: AuthToken):
         "422": {
             "content": {
                 "application/json": {
-                    "example": ValidationError("Account with such id was not found").exc_object
+                    "example": ValidationError(ExceptionEnum.account_by_id_not_found).exc_object
                 }
             }
         },
         "42201": {
             "content": {
                 "application/json": {
-                    "example": ValidationError("Already confirmed").exc_object
+                    "example": ValidationError(ExceptionEnum.account_already_confirmed).exc_object
                 }
             }
         }
@@ -193,7 +195,7 @@ async def confirm_email(
 ):
     account = AuthService().get_by_id(account_id)
     if account.confirmed:
-        raise ValidationError("Already confirmed")
+        raise ValidationError(ExceptionEnum.account_already_confirmed)
     AuthService().confirm_account(account_id=account_id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
@@ -208,14 +210,14 @@ async def confirm_email(
         "422": {
             "content": {
                 "application/json": {
-                    "example": ValidationError("Account with such email was not found").exc_object
+                    "example": ValidationError(ExceptionEnum.account_by_email_not_found).exc_object
                 }
             }
         },
         "42201": {
             "content": {
                 "application/json": {
-                    "example": ValidationError("Account is not confirmed").exc_object
+                    "example": ValidationError(ExceptionEnum.account_not_confirmed).exc_object
                 }
             }
         },
@@ -225,7 +227,7 @@ async def forgot_password(forgot_password_data: ForgotPasswordData):
     email = forgot_password_data.email
     account = AuthService().get_by_email(email)
     if not account.confirmed:
-        raise ValidationError("Account is not confirmed")
+        raise ValidationError(ExceptionEnum.account_not_confirmed)
     AuthService.send_forgot_link(account.account_id, account.email)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
@@ -241,7 +243,7 @@ async def forgot_password(forgot_password_data: ForgotPasswordData):
             "description": "Некоректные данные",
             "content": {
                 "application/json": {
-                    "example": ValidationError("Incorrect auth data").exc_object
+                    "example": ValidationError(ExceptionEnum.incorrect_auth_data).exc_object
                 }
             }
         },
@@ -249,7 +251,7 @@ async def forgot_password(forgot_password_data: ForgotPasswordData):
             "description": "Пароли не совпадают",
             "content": {
                 "application/json": {
-                    "example": ValidationError("Passwords does not equal").exc_object
+                    "example": ValidationError(ExceptionEnum.password_not_equal).exc_object
                 }
             }
         },
@@ -257,7 +259,7 @@ async def forgot_password(forgot_password_data: ForgotPasswordData):
             "description": "Длина пароля меньше нужной",
             "content": {
                 "application/json": {
-                    "example": ValidationError("Length password might be more than 8").exc_object
+                    "example": ValidationError(ExceptionEnum.length_password_lt).exc_object
                 }
             }
         },
@@ -293,7 +295,7 @@ async def auth_reset_password(
             "description": "Некоректные данные",
             "content": {
                 "application/json": {
-                    "example": ValidationError("Incorrect Auth Data").exc_object
+                    "example": ValidationError(ExceptionEnum.incorrect_auth_data).exc_object
                 }
             }
         },
@@ -301,7 +303,7 @@ async def auth_reset_password(
             "description": "Пароли не совпадают",
             "content": {
                 "application/json": {
-                    "example": ValidationError("Passwords does not equal").exc_object
+                    "example": ValidationError(ExceptionEnum.password_not_equal).exc_object
                 }
             }
         },
@@ -309,7 +311,7 @@ async def auth_reset_password(
             "description": "Длина пароля меньше нужной",
             "content": {
                 "application/json": {
-                    "example": ValidationError("Length password might be more than 8").exc_object
+                    "example": ValidationError(ExceptionEnum.length_password_lt).exc_object
                 }
             }
         },
@@ -329,7 +331,7 @@ async def reset_password(
 ):
     account = AuthService().get_by_email(auth_register_data.email)
     if account.account_id != account_id:
-        raise ValidationError("Incorrect Auth Data")
+        raise ValidationError(ExceptionEnum.incorrect_auth_data)
 
     AuthService().update_password(account_id=account.account_id,
                                   password=auth_register_data.password,
@@ -362,7 +364,7 @@ async def token(form_data: OAuth2PasswordRequestForm = Depends()):
             "description": "Некоректные данные",
             "content": {
                 "application/json": {
-                    "example":ValidationError("Account with such id was not found").exc_object
+                    "example":ValidationError(ExceptionEnum.account_by_id_not_found).exc_object
                 }
             }
         },
@@ -370,7 +372,7 @@ async def token(form_data: OAuth2PasswordRequestForm = Depends()):
             "description": "Некорректный токен",
             "content": {
                 "application/json": {
-                    "example": ValidationError("Authentication credentials is not valid").exc_object
+                    "example": ValidationError(ExceptionEnum.authentication_credentials_is_not_valid).exc_object
                 }
             }
         }
@@ -394,7 +396,7 @@ async def get_account(
             "description": "Некорректный токен",
             "content": {
                 "application/json": {
-                    "example": ValidationError("Authentication credentials is not valid").exc_object
+                    "example": ValidationError(ExceptionEnum.authentication_credentials_is_not_valid).exc_object
                 }
             }
         },
@@ -402,7 +404,7 @@ async def get_account(
             "description": "Адрес электронной почты уже используется",
             "content": {
                 "application/json": {
-                    "example": ValidationError("Address already use").exc_object
+                    "example": ValidationError(ExceptionEnum.email_address_already_use).exc_object
                 }
             }
         }

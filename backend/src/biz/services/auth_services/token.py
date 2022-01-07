@@ -6,6 +6,8 @@ import pytz
 
 from src.biz.exceptions.custom import ValidationError, InternalError
 
+from src.biz.exceptions.enums import ExceptionEnum
+
 OBJECT_UTC = pytz.UTC
 
 
@@ -59,4 +61,4 @@ class JWTService:
 
             return payload['account_id']
         except Exception:
-            raise ValidationError("Authentication credentials is not valid")
+            raise ValidationError(ExceptionEnum.authentication_credentials_is_not_valid)

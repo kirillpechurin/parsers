@@ -6,6 +6,7 @@ from src.biz.services.handbooks_services.city import CityService
 from src.biz.services.handbooks_services.example import ExampleService
 from src.biz.exceptions.custom import NotFoundError
 
+from src.biz.exceptions.enums import ExceptionEnum
 
 handbooks_router = APIRouter(
     prefix="/handbooks",
@@ -36,7 +37,7 @@ handbooks_router = APIRouter(
         404: {
             "content": {
                 "application/json": {
-                    "example": NotFoundError("Cities not found").exc_object
+                    "example": NotFoundError(ExceptionEnum.cities_not_found).exc_object
                 }
             }
         }
@@ -89,7 +90,7 @@ async def list_cities():
         404: {
             "content": {
                 "application/json": {
-                    "example": NotFoundError("Cities not found").exc_object
+                    "example": NotFoundError(ExceptionEnum.maps_examples_not_found).exc_object
                 }
             }
         }

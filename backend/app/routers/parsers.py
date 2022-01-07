@@ -1,19 +1,16 @@
 from fastapi import APIRouter, Depends, Path
 from fastapi.responses import Response
 from starlette import status
-
 from app.dependences.auth import get_current_account
 from src.biz.exceptions.custom import ValidationError, NotFoundError
-
 from app.models.auth import Account
 from app.models.parsers import Order, TypeParser
 from app.models.responses.wrap import WrapModel
 from src.biz.services.parsers_services.maps.map_service import MapService
-
-
 from src.biz.services.parsers_services.maps.map_order import MapOrderService
-
 from src.biz.services.parsers_services.orders import OrderService
+from src.biz.exceptions.enums import ExceptionEnum
+
 
 parser_router = APIRouter(
     prefix="/parsers",
@@ -35,7 +32,7 @@ parser_router = APIRouter(
             "description": "Неверные данные аутентификации",
             "content": {
                 "application/json": {
-                    "example": ValidationError("Authentication credentials is not valid").exc_object
+                    "example": ValidationError(ExceptionEnum.authentication_credentials_is_not_valid).exc_object
                 }
             }
         }
@@ -64,6 +61,13 @@ parser_router = APIRouter(
                             }
                         ]
                     }
+                }
+            }
+        },
+        404: {
+            "content": {
+                "application/json": {
+                    "example": NotFoundError(ExceptionEnum.maps_not_found).exc_object
                 }
             }
         }
@@ -99,10 +103,7 @@ async def available_platforms_maps():
             "description": "Тип парсера не найден",
             "content": {
                 "application/json": {
-                    "example": {
-                        "code": "not_found",
-                        "detail": "type parser not found"
-                    }
+                    "example": NotFoundError(ExceptionEnum.type_parser_not_found).exc_object
                 }
             }
         }
@@ -112,7 +113,7 @@ async def make_order(order: Order, account: Account = Depends(get_current_accoun
     if order.parser.type == TypeParser.maps.value:
         status_start = MapOrderService().start_order(order, account)
         return WrapModel(data={"status": status_start})
-    raise NotFoundError(detail="type parser not found")
+    raise NotFoundError(detail=ExceptionEnum.type_parser_not_found)
 
 
 @parser_router.get(
@@ -205,14 +206,14 @@ async def orders(account: Account = Depends(get_current_account)):
         404: {
             "content": {
                 "application/json": {
-                    "example": NotFoundError(detail="Order not found").exc_object
+                    "example": NotFoundError(ExceptionEnum.order_not_found).exc_object
                 }
             }
         },
         40401: {
             "content": {
                 "application/json": {
-                    "example": NotFoundError(detail="type parser not found").exc_object
+                    "example": NotFoundError(ExceptionEnum.type_parser_not_found).exc_object
                 }
             }
         }
@@ -232,7 +233,7 @@ async def detail_order(
         return WrapModel(
             data=detail_order_model
         )
-    raise NotFoundError(detail="type parser not found")
+    raise NotFoundError(ExceptionEnum.type_parser_not_found)
 
 
 @parser_router.delete(
@@ -241,10 +242,8 @@ async def detail_order(
     summary="Удалить заказ",
     description="Удалить заказ по id",
     response_description="Заказ успешно удален",
+    status_code=status.HTTP_204_NO_CONTENT,
     responses={
-        200: {
-            "content": None
-        },
         422: {
             "content": {
                 "application/json": {
@@ -263,7 +262,7 @@ async def detail_order(
         404: {
             "content": {
                 "application/json": {
-                    "example": NotFoundError(detail="Order not found").exc_object
+                    "example": NotFoundError(ExceptionEnum.order_not_found).exc_object
                 }
             }
         }

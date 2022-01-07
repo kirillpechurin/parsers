@@ -2,6 +2,8 @@ import os
 
 import yagmail
 
+from src.biz.exceptions.custom import InternalError
+
 
 class MailService:
 
@@ -13,9 +15,12 @@ class MailService:
              subject,
              contents
              ):
-        connection = self.get_connection()
-        connection.send(
-            to=to,
-            subject=subject,
-            contents=contents
-        )
+        try:
+            connection = self.get_connection()
+            connection.send(
+                to=to,
+                subject=subject,
+                contents=contents
+            )
+        except Exception:
+            raise InternalError

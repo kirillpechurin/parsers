@@ -4,6 +4,8 @@ from bson import ObjectId
 from src.biz.services.base_service import BaseService
 from src.biz.exceptions.custom import NotFoundError
 
+from src.biz.exceptions.enums import ExceptionEnum
+
 
 class OrderService(BaseService):
 
@@ -41,5 +43,5 @@ class OrderService(BaseService):
     def get_by_id(self, order_id: str):
         order = self.collection.find_one({"_id": ObjectId(order_id)})
         if not order:
-            raise NotFoundError(detail="Order not found")
+            raise NotFoundError(ExceptionEnum.order_not_found)
         return order
