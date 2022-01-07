@@ -27,3 +27,10 @@ class AccountService:
         if response.status_code != 200:
             return None, response.json()['detail']
         return response.json()['data'], None
+
+    @staticmethod
+    def confirm_email(account_id):
+        response = RequestService.post(f"/auth/confirm/{account_id}")
+        if response.status_code != 204:
+            return None, response.json()['detail']
+        return None, None

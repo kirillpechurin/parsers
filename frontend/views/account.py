@@ -47,3 +47,15 @@ def logout(auth_token):
     if request.method == "POST":
         session.pop("x_token")
     return redirect(url_for("account.login"))
+
+
+@account.route('/confirm_email/<account_id>', methods=["GET"])
+def confirm_email(account_id):
+    _, errors = AccountService.confirm_email(account_id)
+    flash_message = "Аккаунт успешно подтвержден"
+    if errors:
+        flash_message = errors
+    flash(flash_message)
+    if session['x_token']:
+        return redirect(url_for("account.personal_office"))
+    return redirect(url_for("account.login"))
