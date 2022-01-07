@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, Path
+from fastapi.responses import Response
 from starlette import status
 
 from app.dependences.auth import get_current_account
@@ -232,3 +233,48 @@ async def detail_order(
             data=detail_order_model
         )
     raise NotFoundError(detail="type parser not found")
+
+
+@parser_router.delete(
+    "/orders/{order_id}",
+    response_model=WrapModel,
+    summary="Удалить заказ",
+    description="Удалить заказ по id",
+    response_description="Заказ успешно удален",
+    responses={
+        200: {
+            "content": None
+        },
+        422: {
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": {
+                            "location": "path",
+                            "field": "order_id",
+                            "message": "field required",
+                            "type": "type",
+                        },
+                        "body": {}
+                    }
+                }
+            }
+        },
+        404: {
+            "content": {
+                "application/json": {
+                    "example": NotFoundError(detail="Order not found").exc_object
+                }
+            }
+        }
+    }
+)
+async def delete_order(
+        order_id: str = Path(...,
+                             title="Параметр order_od",
+                             description="Параметр order_id для удаления заказа",
+                             min_length=24,
+                             max_length=24),
+):
+    deleted_status = OrderService().delete_by_id(order_id)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
