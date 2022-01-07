@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Path
 from starlette import status
 
 from app.dependences.auth import get_current_account
@@ -157,3 +157,78 @@ async def orders(account: Account = Depends(get_current_account)):
     return WrapModel(
         data=data
     )
+
+
+@parser_router.get(
+    "/orders/{order_id}",
+    response_model=WrapModel,
+    status_code=status.HTTP_200_OK,
+    summary="Детальная информация по заказу",
+    description="Детальная информация по заказу по id",
+    response_description="Вывод детальной информации по заказу",
+    responses={
+        200: {
+            "content": {
+                "application/json": {
+                    "example": {
+                        "data": {
+                            "id": "order_id",
+                            "data": {"city": "city", "organisation": "organisation"},
+                            "created_at": "created_at",
+                            "result": {
+                                "html_filename": "html_filename",
+                                "data": [
+                                    {'address': [{}]}
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        422: {
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": {
+                            "location": "path",
+                            "field": "order_id",
+                            "message": "field required",
+                            "type": "type",
+                        },
+                        "body": {}
+                    }
+                }
+            }
+        },
+        404: {
+            "content": {
+                "application/json": {
+                    "example": NotFoundError(detail="Order not found").exc_object
+                }
+            }
+        },
+        40401: {
+            "content": {
+                "application/json": {
+                    "example": NotFoundError(detail="type parser not found").exc_object
+                }
+            }
+        }
+    }
+)
+async def detail_order(
+        order_id: str = Path(...,
+                             title="Параметр order_od",
+                             description="Параметр order_id для детальной информации о заказе",
+                             min_length=24,
+                             max_length=24),
+):
+    order = OrderService().get_by_id(order_id)
+    order_model = Order.parse_obj(order.get("data"))
+    if order_model.parser.type == TypeParser.maps.value:
+        detail_order_model = MapOrderService.create_detail_order(order_model, order_dict=order)
+        return WrapModel(
+            data=detail_order_model
+        )
+    raise NotFoundError(detail="type parser not found")
