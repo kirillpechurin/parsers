@@ -10,6 +10,7 @@ def init_app():
     Server.set_app(app)
     Server.set_routers(api_routers)
     Server.set_exception_handlers(handlers)
+    Server.set_static()
 
 
 init_app()
