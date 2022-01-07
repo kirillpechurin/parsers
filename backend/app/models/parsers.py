@@ -7,17 +7,56 @@ from pydantic import BaseModel, HttpUrl, Field
 
 
 class Map(BaseModel):
-    name: str
-    correct: bool
-    link: HttpUrl
-    image_link: str
+    """
+    Модель предустановленных данных карты в БД
+    """
+    name: str = Field(
+        ...,
+        title="Имя карты",
+        description="Имя на английском по типу slug",
+        example="2gis"
+    )
+    correct: bool = Field(
+        ...,
+        title="Корректна ли работа парсера",
+        description="Протестирован ли парсер",
+        example=True
+    )
+    link: HttpUrl = Field(
+        ...,
+        title="Ссылка на карту",
+        description="Ссылка на страницу, с которой парсятся данные",
+        example="https://yandex.ru/maps"
+    )
+    image_link: str = Field(
+        ...,
+        title="Изображение",
+        description="Изображение карт",
+        example="images/maps/yandex.jpg"
+    )
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "name": "2gis",
+                "correct": True,
+                "link": "https://yandex.ru/maps",
+                "image_link": "images/maps/yandex.jpg"
+            }
+        }
 
 
 class TypeParser(str, Enum):
+    """
+    Перечисление доступных типов парсинга
+    """
     maps = "maps"
 
 
 class MapData(BaseModel):
+    """
+    Данные для парсинга карт
+    """
     city: str = Field(
         ...,
         title="Город, в котором нужно спарсить информацию",
@@ -41,6 +80,9 @@ class MapData(BaseModel):
 
 
 class OrderParser(BaseModel):
+    """
+    Данные для парсера, общие данные
+    """
     name: str = Field(
         ...,
         title="Name of parser instance",
@@ -64,6 +106,11 @@ class OrderParser(BaseModel):
 
 
 class Order(BaseModel):
+    """
+    Модель заказа
+
+    Содержит как данные для парсинга, так и данные для самого экземляра парсера
+    """
     data: Union[MapData] = Field(
         ...,
         title='Объект данных для парсинга',
@@ -87,6 +134,9 @@ class Order(BaseModel):
 
 
 class MapReviews(BaseModel):
+    """
+    Модель отзывов с карт
+    """
     html_filename: str = Field(
         ...,
         title='Имя html файла отзывов',
@@ -112,6 +162,9 @@ class MapReviews(BaseModel):
 
 
 class DetailOrder(BaseModel):
+    """
+    Модель детальной информации о заказе
+    """
     order_id: str = Field(
         ...,
         title="Id заказа",
