@@ -65,6 +65,7 @@ parser_router = APIRouter(
             }
         },
         404: {
+            "description": "Карты не найдены",
             "content": {
                 "application/json": {
                     "example": NotFoundError(ExceptionEnum.maps_not_found).exc_object
@@ -145,7 +146,14 @@ async def make_order(order: Order, account: Account = Depends(get_current_accoun
                 }
             }
         },
-
+        404: {
+            "description": "Тип парсера не найден",
+            "content": {
+                "application/json": {
+                    "example": NotFoundError(ExceptionEnum.type_parser_not_found).exc_object
+                }
+            }
+        }
     }
 )
 async def orders(account: Account = Depends(get_current_account)):
@@ -156,6 +164,7 @@ async def orders(account: Account = Depends(get_current_account)):
         if order_model.parser.type == TypeParser.maps.value:
             detail_order_model = MapOrderService.create_detail_order(order_model, order)
             data.append(detail_order_model)
+        raise NotFoundError(ExceptionEnum.type_parser_not_found)
     return WrapModel(
         data=data
     )
@@ -189,6 +198,7 @@ async def orders(account: Account = Depends(get_current_account)):
             }
         },
         422: {
+            "description": "Order Id отсутствует",
             "content": {
                 "application/json": {
                     "example": {
@@ -204,6 +214,7 @@ async def orders(account: Account = Depends(get_current_account)):
             }
         },
         404: {
+            "description": "Заказ с таким id не найден",
             "content": {
                 "application/json": {
                     "example": NotFoundError(ExceptionEnum.order_not_found).exc_object
@@ -211,6 +222,7 @@ async def orders(account: Account = Depends(get_current_account)):
             }
         },
         40401: {
+            "description": "Тип парсера не найден",
             "content": {
                 "application/json": {
                     "example": NotFoundError(ExceptionEnum.type_parser_not_found).exc_object
@@ -221,7 +233,7 @@ async def orders(account: Account = Depends(get_current_account)):
 )
 async def detail_order(
         order_id: str = Path(...,
-                             title="Параметр order_od",
+                             title="Параметр order_id",
                              description="Параметр order_id для детальной информации о заказе",
                              min_length=24,
                              max_length=24),
@@ -245,6 +257,7 @@ async def detail_order(
     status_code=status.HTTP_204_NO_CONTENT,
     responses={
         422: {
+            "description": "Order Id отсутствует",
             "content": {
                 "application/json": {
                     "example": {
@@ -260,6 +273,7 @@ async def detail_order(
             }
         },
         404: {
+            "description": "Заказ с таким id не найден",
             "content": {
                 "application/json": {
                     "example": NotFoundError(ExceptionEnum.order_not_found).exc_object
@@ -270,7 +284,7 @@ async def detail_order(
 )
 async def delete_order(
         order_id: str = Path(...,
-                             title="Параметр order_od",
+                             title="Параметр order_id",
                              description="Параметр order_id для удаления заказа",
                              min_length=24,
                              max_length=24),

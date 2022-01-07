@@ -137,7 +137,7 @@ async def login(auth_login_data: AuthLoginData):
             }
         },
         "422": {
-            "description": "",
+            "description": "Неверные данные аутентификации",
             "content": {
                 "application/json": {
                     "example": ValidationError(ExceptionEnum.authentication_credentials_is_not_valid).exc_object
@@ -145,7 +145,7 @@ async def login(auth_login_data: AuthLoginData):
             }
         },
         "42201": {
-            "description": "",
+            "description": "Аккаунт с таким id не найден",
             "content": {
                 "application/json": {
                     "example": ValidationError(ExceptionEnum.account_by_id_not_found).exc_object
@@ -170,6 +170,7 @@ async def check_token(auth_token: AuthToken):
     response_description="Успешно подтвержден",
     responses={
         "422": {
+            "description": "Аккаунт с таким id не найден",
             "content": {
                 "application/json": {
                     "example": ValidationError(ExceptionEnum.account_by_id_not_found).exc_object
@@ -177,6 +178,7 @@ async def check_token(auth_token: AuthToken):
             }
         },
         "42201": {
+            "description": "Аккаунт уже подтвержден",
             "content": {
                 "application/json": {
                     "example": ValidationError(ExceptionEnum.account_already_confirmed).exc_object
@@ -208,6 +210,7 @@ async def confirm_email(
     response_description="Ссылка успешно отправлена на email",
     responses={
         "422": {
+            "description": "Аккаунт с таким email не найден",
             "content": {
                 "application/json": {
                     "example": ValidationError(ExceptionEnum.account_by_email_not_found).exc_object
@@ -215,6 +218,7 @@ async def confirm_email(
             }
         },
         "42201": {
+            "description": "Аккаунт не подтвержден",
             "content": {
                 "application/json": {
                     "example": ValidationError(ExceptionEnum.account_not_confirmed).exc_object
@@ -369,7 +373,7 @@ async def token(form_data: OAuth2PasswordRequestForm = Depends()):
             }
         },
         "42201": {
-            "description": "Некорректный токен",
+            "description": "Неверные данные аутентификации",
             "content": {
                 "application/json": {
                     "example": ValidationError(ExceptionEnum.authentication_credentials_is_not_valid).exc_object
@@ -393,7 +397,7 @@ async def get_account(
     response_model=WrapModel,
     responses={
         "422": {
-            "description": "Некорректный токен",
+            "description": "Неверные данные аутентификации",
             "content": {
                 "application/json": {
                     "example": ValidationError(ExceptionEnum.authentication_credentials_is_not_valid).exc_object

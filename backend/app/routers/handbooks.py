@@ -88,6 +88,7 @@ async def list_cities():
             }
         },
         404: {
+            "description": "Примеры парсинга с карт не найдены",
             "content": {
                 "application/json": {
                     "example": NotFoundError(ExceptionEnum.maps_examples_not_found).exc_object
