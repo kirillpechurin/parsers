@@ -1,6 +1,6 @@
 import os
 
-from src.cel.tasks import send_on_email
+from src.cel.tasks.send_mail import send_on_email
 
 
 class APIException(Exception):
@@ -38,12 +38,14 @@ class InternalError(APIException):
             "detail": self.default_detail
         }
         self.status_code = 500
-        self.send_to_admin(message)
+        if message:
+            self.send_to_admin(message)
 
-    def send_to_admin(self, message):
+    @staticmethod
+    def send_to_admin(message):
         email = os.environ.get("ADMIN_EMAIL")
         subject = "Внутренняя ошибка"
-        body = message if message else self.default_detail
+        body = message
         send_on_email.delay(email, subject, body)
 
 

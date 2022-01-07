@@ -9,10 +9,9 @@ from pydantic import EmailStr
 from app.models.auth import Account
 from src.biz.exceptions.custom import InternalError, ValidationError
 from src.biz.services.base_service import BaseService
-from src.biz.services.mail.sender import MailService
 
 from src.biz.exceptions.enums import ExceptionEnum
-from src.cel.tasks import send_on_email
+from src.cel.tasks.send_mail import send_on_email
 
 
 class AuthService(BaseService):
@@ -32,7 +31,7 @@ class AuthService(BaseService):
         try:
             hash_password = hashlib.sha512(password.encode("utf-8")).hexdigest()
         except:
-            raise InternalError
+            raise InternalError(message="Ошибка шифрования пароля")
         return hash_password
 
     def check_on_email(self, email: EmailStr) -> Optional[bool]:

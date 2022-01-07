@@ -18,4 +18,4 @@ class BaseService:
                                               password=os.environ.get("MONGO_DB_PASSWORD"))
             self.db_name = self.client[os.environ.get("MONGO_DB_NAME")]
         except:
-            raise InternalError
+            raise InternalError(message="Ошибка соединения с БД")

@@ -54,7 +54,7 @@ def get_str_date(date: datetime) -> str:
 class JWTService:
 
     @staticmethod
-    def create_token(account_id: str) -> Optional[jwt]:
+    def create_token(account_id: str) -> Optional[jwt.encode]:
         """
         Создание json web token
 
@@ -72,7 +72,7 @@ class JWTService:
                 algorithm=ALGORITHM
             )
         except:
-            raise InternalError
+            raise InternalError(message="Ошибка создания токена")
 
     @staticmethod
     def decode_token(value: str) -> str:
