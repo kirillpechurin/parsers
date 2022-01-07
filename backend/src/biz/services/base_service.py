@@ -8,6 +8,9 @@ from src.biz.exceptions.custom import InternalError
 class BaseService:
 
     def __init__(self):
+        """
+        Соединение с БД
+        """
         try:
             self.client = pymongo.MongoClient(host="mongodb",
                                               port=27017,

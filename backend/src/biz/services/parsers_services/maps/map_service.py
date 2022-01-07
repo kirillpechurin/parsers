@@ -11,7 +11,11 @@ class MapService(BaseService):
         super(MapService, self).__init__()
         self.collection = self.db_name['maps']
 
-    def get_available_maps(self):
+    def get_available_maps(self) -> list:
+        """
+        Получить доступные платформы карт
+        :return: список результатов or raise Error
+        """
         results = self.collection.find({"available": True})
         results = [r for r in results]
         if not results:

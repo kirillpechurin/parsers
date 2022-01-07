@@ -1,3 +1,5 @@
+from typing import Optional, List
+
 from src.biz.exceptions.custom import NotFoundError
 from src.biz.services.base_service import BaseService
 
@@ -10,7 +12,12 @@ class CityService(BaseService):
         super(CityService, self).__init__()
         self.collection = self.db_name['cities']
 
-    def get_cities(self):
+    def get_cities(self) -> Optional[List[str]]:
+        """
+        Получить города
+
+        :return: список названий городов или ошибка, что их нет
+        """
         results = self.collection.find()
         results = [r['name'] for r in results if r]
         if not results:

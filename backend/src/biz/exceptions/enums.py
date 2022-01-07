@@ -2,7 +2,9 @@ from src.biz.exceptions.utils import classproperty
 
 
 class ExceptionEnum:
-
+    """
+    Перечисление текста исключений
+    """
     # Auth exceptions
     @classproperty
     def account_email_already_exists(cls):
@@ -64,6 +66,7 @@ class ExceptionEnum:
     def type_parser_not_found(cls):
         return "Тип парсера не найден"
 
+    #  order
     @classproperty
     def order_not_found(cls):
         return "Заказ не найден"
