@@ -8,6 +8,9 @@ from src.biz.services.auth_services.token import TOKEN_LIFETIME_SECONDS
 
 
 class AuthRegisterData(BaseModel):
+    """
+    Модель регистрационных данных пользователя
+    """
     email: EmailStr = Field(
         ...,
         title="E-Mail",
@@ -38,6 +41,9 @@ class AuthRegisterData(BaseModel):
 
 
 class AuthLoginData(BaseModel):
+    """
+    Модель авторизации пользователя
+    """
     email: EmailStr = Field(
         ...,
         title="E-Mail",
@@ -61,6 +67,9 @@ class AuthLoginData(BaseModel):
 
 
 class AuthToken(BaseModel):
+    """
+    Модель JWT токена
+    """
     access_token: str = Field(
         ...,
         title="Json Web Token авторизации",
@@ -91,6 +100,9 @@ class AuthToken(BaseModel):
 
 
 class Account(BaseModel):
+    """
+    Модель сущности пользователя (аккаунта)
+    """
     account_id: str = Field(
         ...,
         title="ObjectId field entity",
@@ -141,7 +153,13 @@ class Account(BaseModel):
         }
 
     @classmethod
-    def parse_obj(cls, obj: dict):
+    def parse_obj(cls, obj: dict) -> Optional[BaseModel]:
+        """
+        Метод переопределен для удобства
+
+        :param obj: объект данных, который нужно сериализовать в Модель
+        :return: Account instance
+        """
         data = {}
         if obj.get("_id"):
             data["account_id"] = str(obj.pop("_id"))
@@ -150,6 +168,11 @@ class Account(BaseModel):
 
 
 class ForgotPasswordData(BaseModel):
+    """
+    Модель для восстановления пароля.
+
+    Email нужен, чтобы отправить на него ссылку для восстановления
+    """
     email: EmailStr = Field(
         ...,
         title="Email user",
@@ -166,6 +189,9 @@ class ForgotPasswordData(BaseModel):
 
 
 class AuthResetPasswordData(BaseModel):
+    """
+    Модель для восстановления пароля для авторизованного пользователя
+    """
     old_password: str = Field(
         ...,
         title="Old Password",
@@ -196,6 +222,9 @@ class AuthResetPasswordData(BaseModel):
 
 
 class PatchAccountData(BaseModel):
+    """
+    Модель для обновления информации об аккаунте
+    """
     email: Optional[EmailStr] = Field(
         None,
         title="New E-mail address",

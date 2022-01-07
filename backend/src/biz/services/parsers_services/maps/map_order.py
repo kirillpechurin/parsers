@@ -1,3 +1,5 @@
+from typing import Dict
+
 from src.cel.tasks import map_parser_task
 
 from app.models.auth import Account
@@ -13,19 +15,41 @@ class MapOrderService:
         self.task = map_parser_task
 
     @staticmethod
-    def __prepare_task_data(order: Order):
+    def __prepare_task_data(order: Order) -> Dict[str, str]:
+        """
+        Подготовить данные для задачи
+
+        :param order: сущность заказа
+        :return: Dict
+        """
         return {
             "city": order.data.city,
             "organisation": order.data.organisation
         }
 
     @staticmethod
-    def __create_order(order: Order, account: Account):
+    def __create_order(order: Order, account: Account) -> str:
+        """
+        Создать заказ
+
+        :param order: сущность заказа
+        :param account: сущность пользователя
+        :return: order id
+        """
         order_data = order.dict()
         order_id = OrderService().create_order(data=order_data, email=account.email)
         return order_id
 
     def start_order(self, order: Order, account: Account):
+        """
+        Запустить заказ
+
+        Создает заказ
+        Подготавливает данные для задачи и запускает задачу
+        :param order: сущность заказа
+        :param account: сущность пользователя
+        :return: успешно создан
+        """
         order_id = self.__create_order(order, account)
         data = self.__prepare_task_data(order)
         self.task.delay(
@@ -36,7 +60,14 @@ class MapOrderService:
         return True
 
     @staticmethod
-    def create_detail_order(order: Order, order_dict: dict):
+    def create_detail_order(order: Order, order_dict: dict) -> DetailOrder:
+        """
+        Создать сущность детального заказа
+
+        :param order: сущность заказа
+        :param order_dict: сущность заказа в виде order
+        :return: DetailOrder
+        """
         order_id = str(order_dict.get('_id'))
         review = MapReviewsService().get_by_order_id(order_id)
         return DetailOrder(
