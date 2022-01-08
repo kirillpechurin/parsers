@@ -56,3 +56,13 @@ def make_order_maps(auth_token, map_name):
         flash(errors)
         return redirect(url_for("parsers.index"))
     return render_template("parsers/make_order_maps.html", map_name=map_name, cities=cities)
+
+
+@parsers.route('/orders', methods=["GET"])
+@authorization_required
+def orders(auth_token):
+    response, errors = ParserService.get_orders(x_token=auth_token)
+    if errors:
+        flash(errors)
+        return redirect(url_for("parsers.index"))
+    return render_template("parsers/orders.html", orders=response)

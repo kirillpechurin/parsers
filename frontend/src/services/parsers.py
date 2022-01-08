@@ -4,6 +4,7 @@ BASE_PREFIX = "/parsers"
 
 ORDER_PREFIX = BASE_PREFIX + "/orders"
 AVAILABLE_PLATFORMS_MAPS_PREFIX = BASE_PREFIX + "/available_platforms/maps"
+ORDERS_PREFIX = BASE_PREFIX + "/orders"
 
 
 class ParserService:
@@ -19,5 +20,12 @@ class ParserService:
     def make_order(x_token, data):
         response = RequestService.post_auth(ORDER_PREFIX, data=data, x_token=x_token)
         if response.status_code != 201:
+            return None, response.json()['detail']
+        return response.json()['data'], None
+
+    @staticmethod
+    def get_orders(x_token):
+        response = RequestService.get_auth(ORDERS_PREFIX, x_token=x_token)
+        if response.status_code != 200:
             return None, response.json()['detail']
         return response.json()['data'], None
