@@ -76,7 +76,7 @@ def forgot_password():
     return render_template("account/forgot_password.html")
 
 
-@account.route("/reset/<account_id>", methods=["GET", "POST"])
+@account.route("/reset_password/<account_id>", methods=["GET", "POST"])
 def reset_password(account_id):
     if request.method == "POST":
         data = {

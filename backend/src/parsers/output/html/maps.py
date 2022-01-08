@@ -1,4 +1,7 @@
 from jinja2 import Template
+
+from src.utils.work_json_file import WorkJsonFile
+
 dictionary = {
     'а': 'a',
     'б': 'b',
@@ -106,7 +109,7 @@ class RenderHTMLBody:
         slug_addresses = [
             self.get_slug_address(address) for address in addresses
         ]
-        all_count_reviews = sum([len(reviews.get(address)) for address in addresses])
+        all_count_reviews = sum([len(reviews.get(address)) for address in addresses if reviews.get(address)])
         body = render_jinja_html(SOURCE_RENDERING_FILE, slug_addresses=slug_addresses, addresses_with_reviews=addresses_with_reviews, all_count_reviews=all_count_reviews)
         with open(self.filename, mode='w') as file:
             file.write(body)

@@ -73,7 +73,7 @@ class AuthService(BaseService):
         :param origin_server: Клиент
         :return: None
         """
-        link = f"{origin_server}/confirm_email/{account_id}"
+        link = f"{origin_server}/account/confirm_email/{account_id}"
         subject = "Подтверждение аккаунта"
         body = f"""Перейдите по ссылке для подтверждения. <a href="{link}">Подтвердить аккаунт</a>"""
         send_on_email.delay(email, subject, body)
@@ -177,7 +177,7 @@ class AuthService(BaseService):
         :param origin_server: Клиент
         :return: None
         """
-        link = f"{origin_server}/reset_password/{account_id}"
+        link = f"{origin_server}/account/reset_password/{account_id}"
         subject = "Восстановление пароля"
         body = f"""Перейдите по ссылке для сброса пароля. \n\n <a href="{link}">Сбросить пароль</a>"""
         send_on_email.delay(email, subject, body)

@@ -118,7 +118,8 @@ class GoogleReviews(BaseReviews, MapReviewsInterface):
             self.sleep(3)
             address = self.get_address()
             reviews = self.get_reviews()
-
+            if not reviews:
+                reviews = []
             if all_reviews.get(address):
                 all_reviews[address].extend(reviews)
             else:
@@ -161,6 +162,7 @@ class GoogleReviews(BaseReviews, MapReviewsInterface):
 
             if (first_value, second_value) not in checklist:
                 print("{} : {}".format(first_value, second_value))
+                checklist.append((first_value, second_value))
 
                 links = self.get_links_on_branches(second_value - first_value)
                 reviews = self.get_reviews_by_links(links)
