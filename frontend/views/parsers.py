@@ -85,3 +85,12 @@ def delete_order(auth_token, order_id):
     if errors:
         flash(errors)
     return redirect(url_for("parsers.orders"))
+
+
+@parsers.route('/examples', methods=["GET"])
+def examples():
+    response, errors = HandbookService.get_examples()
+    if errors:
+        flash(errors)
+        return redirect(url_for("parsers.index"))
+    return render_template("examples.html", data=response)
