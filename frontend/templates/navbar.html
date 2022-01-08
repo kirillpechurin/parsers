@@ -1,0 +1,30 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <a class="navbar-brand pl-3" href="{{ url_for('parsers.index') }}">Reviews Parser</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <a class="nav-item nav-link active" href="{{ url_for('parsers.index') }}">Главная</a>
+                <a class="nav-item nav-link" href="{{ url_for('parsers.available_platforms') }}">Доступные площадки</a>
+                <a class="nav-item nav-link" href="{{ url_for('parsers.examples') }}">Примеры</a>
+                <a class="nav-item nav-link" href="{{ url_for('parsers.make_order') }}">Сделать заказ</a>
+            </div>
+        </div>
+        <div class="collapse navbar-collapse" id="newNavbar">
+            <div class="navbar-nav">
+                {% if session['x_token'] %}
+                    <a class="nav-item nav-link" href="{{ url_for('account.personal_office') }}">Личный кабинет</a>
+                    <form action="{{ url_for('account.logout') }}" method="post">
+                        <button type="submit" class="btn nav-item nav-link">Выйти</button>
+                    </form>
+                {% else %}
+                    <a class="nav-item nav-link" href="{{ url_for('account.login') }}">Войти</a>
+                    <a class="nav-item nav-link" href="{{ url_for('account.signup') }}">Зарегистрироваться</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>

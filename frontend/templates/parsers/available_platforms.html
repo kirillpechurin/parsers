@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    {% for map in maps %}
+        <div class="col-md-4">
+            <div class="card">
+                <img class="card-img-top" src="{{ url_for('static', filename=map.image_link) }}" alt="Card image cap">
+                <div class="card-body">
+                    <h5 class="card-title">{{ map.name }}</h5>
+                    <p class="card-text">
+                        {% if map.correct %}
+                            <span class="text-success">Парсер протестирован!</span>
+                        {% else %}
+                            <span class="text-danger">Парсер работает в тестовом режиме!</span>
+                        {% endif %}
+                    </p>
+                    <a href="{{ map.link }}" class="btn btn-info m-2">Перейти на сайт</a>
+                    <a href="/order/maps/{{ map.name }}" class="btn btn-info m-2">Попробовать</a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock content %}
