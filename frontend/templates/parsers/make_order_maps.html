@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row d-flex justify-content-center">
+    <div class="d-flex justify-content-center title">
+        <h4>Заказ</h4>
+    </div>
+    <div class="col-md-4">
+        <form action="{{ url_for('parsers.make_order_maps', map_name=map_name) }}" method="post" id="formOrder">
+            <div class="form-group">
+                <label for="InputCity">Город</label><br>
+                <input name="city" value="Выберите город" required hidden id="InputCity">
+                <input id="InputCityButton" value="Выберите город" type="button" class="btn btn-primary"
+                       data-bs-toggle="modal" data-bs-target="#exampleModal" placeholder="Выберите город">
+            </div>
+            <div class="form-group">
+                <label for="exampleInputOrganisation">Организация</label>
+                <input name="organisation" required type="text" class="form-control" id="exampleInputOrganisation"
+                       placeholder="Введите организацию">
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Подтвердить</button>
+        </form>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {% for city in cities %}
+                    <input onclick="changeCity('{{city}}');" type="button" class="city_input btn btn-light" value="{{city}}">
+                {% endfor %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function changeCity(value){
+        input_city = document.getElementById('InputCity');
+        input_city.value = value;
+        input_city = document.getElementById('InputCityButton');
+        input_city.value = value;
+
+        $('#exampleModal').modal('hide');
+    }
+
+    $(document).ready(function () {
+
+        $('#formOrder').submit(function(event){
+            event.preventDefault();
+            if ($("#InputCityButton").val() == "Выберите город"){
+                alert("Выберите город!");
+                return false;
+            }
+            this.submit();
+        });
+
+    });
+
+</script>
+{% endblock content %}

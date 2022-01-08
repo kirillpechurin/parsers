@@ -66,3 +66,13 @@ def orders(auth_token):
         flash(errors)
         return redirect(url_for("parsers.index"))
     return render_template("parsers/orders.html", orders=response)
+
+
+@parsers.route("/orders/<order_id>", methods=["GET"])
+@authorization_required
+def order_detail(auth_token, order_id):
+    response, errors = ParserService.get_detail_by_id(order_id, x_token=auth_token)
+    if errors:
+        flash(errors)
+        return redirect(url_for("parsers.index"))
+    return render_template("parsers/detail_order.html", order=response)
