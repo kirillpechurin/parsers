@@ -102,7 +102,8 @@ class GoogleReviews(BaseReviews, MapReviewsInterface):
             return None
 
         text_review = self.transition_to_reviews()
-        count_reviews = int(re.search(r'\d+', text_review).group())
+        list_str_digit = re.findall(r"\d+", text_review)
+        count_reviews = int("".join(list_str_digit))
 
         return self._get_reviews(count_reviews=count_reviews,
                                  accordance_method="class_name",
@@ -143,9 +144,12 @@ class GoogleReviews(BaseReviews, MapReviewsInterface):
         first_value = None
         self.sleep(3)
         main_url = self.driver.current_url
+        checklist = []
 
         button_next = self.find_one('xpath', XPATH_BUTTON_NEXT)
-        while ATTRIBUTE_DISABLED_BUTTON not in button_next.get_attribute("class"):
+        check_first_value, check_second_value = self.count_result_in_page()
+        while ATTRIBUTE_DISABLED_BUTTON not in button_next.get_attribute("class") or check_second_value < 20:
+            check_second_value = 21
             if first_value:
                 res = self.transition_to_next_page(button_next)
                 if not res:
@@ -154,15 +158,17 @@ class GoogleReviews(BaseReviews, MapReviewsInterface):
             first_value, second_value = self.count_result_in_page()
             if not first_value and not second_value:
                 break
-            print("{} : {}".format(first_value, second_value))
 
-            links = self.get_links_on_branches(second_value - first_value)
-            reviews = self.get_reviews_by_links(links)
+            if (first_value, second_value) not in checklist:
+                print("{} : {}".format(first_value, second_value))
 
-            all_reviews.update(reviews)
+                links = self.get_links_on_branches(second_value - first_value)
+                reviews = self.get_reviews_by_links(links)
 
-            self.driver.get(main_url)
-            self.sleep(2)
+                all_reviews.update(reviews)
+
+                self.driver.get(main_url)
+                self.sleep(2)
 
             button_next = self.find_one('xpath', XPATH_BUTTON_NEXT)
         return all_reviews
@@ -172,7 +178,7 @@ class GoogleReviews(BaseReviews, MapReviewsInterface):
         self.driver.get(self.url)
         result = self.transition_to_branches(self.search_data)
         if not result:
-            return None
+            return None, None
         reviews = self.find_by_pages()
         html_filename = self.render_html(self.result_filename, reviews)
         return reviews, html_filename

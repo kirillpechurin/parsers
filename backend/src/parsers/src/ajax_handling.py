@@ -14,6 +14,9 @@ class AjaxHandling(BaseDriver):
         check_result = []
         while len(result) != count_elements:
             result = self.search_methods.find_list(method_search, value_search)
+            if not result:
+                break
+
             self.scroll.do_scroll_to_elem(result[-1])
 
             check_result.append(len(result))
