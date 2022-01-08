@@ -1,4 +1,5 @@
 import io
+import os
 import zipfile
 import requests
 
@@ -11,12 +12,12 @@ def download_zip(url: str, filename):
 
 
 def create_storage():
-    download_zip(url="https://vk.com/doc57748892_625663153?hash=9e069afd77f65a322d&dl=10c1aacc09d43a2c6f",
+    download_zip(url=os.environ.get("STORAGE_ZIP_URL"),
                  filename="storage")
     return True
 
 
 def create_static():
-    download_zip(url="https://vk.com/doc57748892_625662964?hash=c8debf1a5446760d7e&dl=28666bef7036f07881",
+    download_zip(url=os.environ.get("STATIC_ZIP_URL"),
                  filename="static")
     return True
