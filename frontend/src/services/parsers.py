@@ -37,3 +37,10 @@ class ParserService:
         if response.status_code != 200:
             return None, response.json()['detail']
         return response.json()['data'], None
+
+    @staticmethod
+    def delete_order(order_id, x_token):
+        response = RequestService.delete_auth(DETAIL_ORDER_PREFIX.format(order_id), x_token=x_token)
+        if response.status_code != 204:
+            return None, response.json()['detail']
+        return None, None

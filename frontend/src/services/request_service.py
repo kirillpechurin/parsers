@@ -28,3 +28,7 @@ class RequestService:
     @staticmethod
     def post_auth(url, x_token, data):
         return requests.post(API_SERVER + url, data=json.dumps(data), headers={HEADER_TOKEN: TOKEN.format(x_token)})
+
+    @staticmethod
+    def delete_auth(url, x_token):
+        return requests.delete(API_SERVER + url, headers={HEADER_TOKEN: TOKEN.format(x_token)})
