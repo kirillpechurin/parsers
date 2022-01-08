@@ -117,6 +117,8 @@ async def login(auth_login_data: AuthLoginData):
         email=auth_login_data.email,
         password=auth_login_data.password
     )
+    if not account.confirmed:
+        raise ValidationError(ExceptionEnum.account_not_confirmed)
     access_token = JWTService.create_token(account.account_id)
     return WrapModel(data=AuthToken(
         access_token=access_token,

@@ -164,7 +164,8 @@ async def orders(account: Account = Depends(get_current_account)):
         if order_model.parser.type == TypeParser.maps.value:
             detail_order_model = MapOrderService.create_detail_order(order_model, order)
             data.append(detail_order_model)
-        raise NotFoundError(ExceptionEnum.type_parser_not_found)
+        else:
+            raise NotFoundError(ExceptionEnum.type_parser_not_found)
     return WrapModel(
         data=data
     )

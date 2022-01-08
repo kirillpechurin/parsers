@@ -7,7 +7,7 @@ import selenium
 def garbage_collector(method):
     @functools.wraps(method)
     def wrapper(self, *args, **kwargs):
-        response = None
+        response = (None, None)
         try:
             response = method(self, *args, **kwargs)
         except selenium.common.exceptions.WebDriverException as exc:
