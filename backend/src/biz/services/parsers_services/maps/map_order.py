@@ -76,6 +76,7 @@ class MapOrderService:
             created_at=order_dict.get("created_at"),
             result=MapReviews(
                 html_filename=review.get("html_filename"),
+                json_filename=review.get("json_filename"),
                 data=review.get("data")
             ) if review else None
         )
