@@ -79,11 +79,17 @@ class MapData(BaseModel):
         }
 
 
+class NameParser(str, Enum):
+    gis = "2gis"
+    yandex = "yandex"
+    google = 'google'
+
+
 class OrderParser(BaseModel):
     """
     Данные для парсера, общие данные
     """
-    name: str = Field(
+    name: NameParser = Field(
         ...,
         title="Name of parser instance",
         description="Поле name для выбора парсера, зависит от типа",
