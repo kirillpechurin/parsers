@@ -19,8 +19,8 @@ CLASS_NAME_SEARCH_INPUT_FULL = "_1dhzhec9"  # Второй div для поиск
 CLASS_NAME_SEARCH_RESULTS = "_1vsscbe"  # Результаты при вводе текста в поисковый input
 TEXT_REVIEWS = r'Отзывы'  # вспомогательный текст чтобы найти нужную ссылку
 
-SOURCE_HTML_FILENAME = 'src/parsers/tmp/maps/source/source_gis'  # общий файл для исходного html документа после прокрутки всех отзывов
-RESULT_HTML_FILENAME = "src/parsers/results/maps/html/reviews_gis"  # html file результатов парсинга
+SOURCE_FILENAME = 'src/parsers/tmp/maps/source/source_gis'  # общий файл для исходного html документа после прокрутки всех отзывов
+RESULT_FILENAME = "src/parsers/results/maps/html/reviews_gis"  # html file результатов парсинга
 
 
 class GisReviews(BaseReviews, MapReviewsInterface):
@@ -36,8 +36,10 @@ class GisReviews(BaseReviews, MapReviewsInterface):
         self.info_data = data
         self.info_data['map_name'] = "2Gis"
 
-        self.result_filename = RESULT_HTML_FILENAME + str(uuid.uuid4()) + '.html'
-        self.source_filename = SOURCE_HTML_FILENAME + str(uuid.uuid4()) + ".html"
+        result_filename = RESULT_FILENAME + str(uuid.uuid4())
+        self.result_html_filename = result_filename + '.html'
+        self.result_json_filename = result_filename + ".json"
+        self.source_filename = SOURCE_FILENAME + str(uuid.uuid4()) + ".html"
 
         self.set_implicitly_wait(self.driver, value=10)
 
@@ -93,16 +95,6 @@ class GisReviews(BaseReviews, MapReviewsInterface):
         if not result:
             return None, None
         reviews = self.get_reviews()
-        html_filename = self.render_html(self.result_filename, reviews, self.info_data)
-        return reviews, html_filename
-
-
-if __name__ == '__main__':
-    start = datetime.now()
-    wd = webdriver.Firefox(executable_path='/geckodriver')
-    GisReviews(
-        driver=wd,
-        data={"city": "Пермь", "organisation": "Digital spectr"}
-    ).find()
-    print(datetime.now() - start)
-
+        html_filename = self.render_html(self.result_html_filename, reviews, self.info_data)
+        json_filename = self.create_json(self.result_json_filename, reviews, self.info_data)
+        return reviews, html_filename, json_filename

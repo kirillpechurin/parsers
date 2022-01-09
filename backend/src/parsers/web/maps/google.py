@@ -25,8 +25,8 @@ CLASS_NAME_REVIEW = 'ODSEW-ShBeI'  # класс div отзыва
 XPATH_GENERAL_DIV_ALL_BRANCHES = "//div[@class='siAUzd-neVct section-scrollbox cYB2Ge-oHo7ed cYB2Ge-ti6hGc siAUzd-neVct-Q3DXx-BvBYQ']"  # общий div, где отображаются все филиалы
 TEXT_FOR_CHECK_RESULTS = "Ничего не найдено"  # Текст, по которому можно определить, есть ли результаты на странице
 
-SOURCE_HTML_FILENAME = 'src/parsers/tmp/maps/source/source_google'  # общий файл для исходного html документа после прокрутки всех отзывов
-RESULT_HTML_FILENAME = "src/parsers/results/maps/html/reviews_google"  # html file результатов парсинга
+SOURCE_FILENAME = 'src/parsers/tmp/maps/source/source_google'  # общий файл для исходного html документа после прокрутки всех отзывов
+RESULT_FILENAME = "src/parsers/results/maps/html/reviews_google"  # html file результатов парсинга
 
 CLASS_NAME_RESULTS_SEARCH = 'sbsb_c'  # класс результатов поиска
 CLASS_NAME_SEARCH_INPUT = 'tactile-searchbox-input'  # класс div поиска
@@ -40,8 +40,10 @@ class GoogleReviews(BaseReviews, MapReviewsInterface):
 
         self.url = 'https://www.google.ru/maps/'
 
-        self.result_filename = RESULT_HTML_FILENAME + str(uuid.uuid4()) + '.html'
-        self.source_filename = SOURCE_HTML_FILENAME + str(uuid.uuid4()) + ".html"
+        result_filename = RESULT_FILENAME + str(uuid.uuid4())
+        self.result_html_filename = result_filename + '.html'
+        self.result_json_filename = result_filename + ".json"
+        self.source_filename = SOURCE_FILENAME + str(uuid.uuid4()) + ".html"
 
         self.search_data = {
             data.get("city"): data.get("city"),
@@ -185,16 +187,6 @@ class GoogleReviews(BaseReviews, MapReviewsInterface):
         if not result:
             return None, None
         reviews = self.find_by_pages()
-        html_filename = self.render_html(self.result_filename, reviews, self.info_data)
-        return reviews, html_filename
-
-
-if __name__ == '__main__':
-    start = datetime.now()
-    wd = webdriver.Firefox(executable_path='/geckodriver')
-    GoogleReviews(
-        driver=wd,
-        data={"city": "Пермь", "organisation": "Лион"}
-    ).find()
-    print(datetime.now() - start)
-
+        html_filename = self.render_html(self.result_html_filename, reviews, self.info_data)
+        json_filename = self.create_json(self.result_json_filename, reviews, self.info_data)
+        return reviews, html_filename, json_filename

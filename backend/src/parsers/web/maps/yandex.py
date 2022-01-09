@@ -35,7 +35,10 @@ class YandexReviews(BaseReviews, MapReviewsInterface):
         super().__init__(driver, self.search_elements_data)
         self.url = "https://yandex.ru/maps/"
 
-        self.result_filename = RESULT_HTML_FILENAME + str(uuid.uuid4()) + '.html'
+        result_filename = RESULT_HTML_FILENAME + str(uuid.uuid4())
+        self.result_html_filename = result_filename + '.html'
+        self.result_json_filename = result_filename + ".json"
+
         self.source_filename = SOURCE_HTML_FILENAME + str(uuid.uuid4()) + ".html"
 
         self.info_data = data
@@ -153,15 +156,6 @@ class YandexReviews(BaseReviews, MapReviewsInterface):
         links = self.get_links_on_branches(self.count_organisation)
         all_reviews = self.get_reviews_by_links(links)
 
-        html_filename = self.render_html(self.result_filename, all_reviews, self.info_data)
-        return all_reviews, html_filename
-
-
-if __name__ == '__main__':
-    start = datetime.now()
-    wd = webdriver.Firefox(executable_path='/geckodriver')
-    YandexReviews(
-        driver=wd,
-        data={"city": "Пермь", "organisation": "Лион"}
-    ).find()
-    print(datetime.now() - start)
+        html_filename = self.render_html(self.result_html_filename, all_reviews, self.info_data)
+        json_filename = self.create_json(self.result_json_filename, all_reviews, self.info_data)
+        return all_reviews, html_filename, json_filename

@@ -1,6 +1,7 @@
 from abc import ABC
 from selenium import webdriver
 from src.parsers.output.html.maps import RenderHTMLBody
+from src.parsers.output.json.maps import JsonFile
 from src.parsers.src.ajax_handling import AjaxHandling
 from src.parsers.src.base_driver import BaseDriver
 from src.parsers.src.web_search import WebSearch
@@ -24,6 +25,10 @@ class BaseReviews(BaseDriver, ABC):
     @staticmethod
     def render_html(filename, reviews, info_data):
         return RenderHTMLBody(filename).create(reviews, info_data=info_data)
+
+    @staticmethod
+    def create_json(filename, reviews, info_data):
+        return JsonFile(filename).create(reviews, info_data=info_data)
 
     def _get_reviews(self,
                      count_reviews,
