@@ -48,6 +48,9 @@ class GoogleReviews(BaseReviews, MapReviewsInterface):
             data.get("organisation"): TEXT_FOR_SEARCH_INPUT_ORGANISATION
         }
 
+        self.info_data = data
+        self.info_data['map_name'] = "Google Maps"
+
         self.set_implicitly_wait(self.driver, value=10)
 
     @property
@@ -182,7 +185,7 @@ class GoogleReviews(BaseReviews, MapReviewsInterface):
         if not result:
             return None, None
         reviews = self.find_by_pages()
-        html_filename = self.render_html(self.result_filename, reviews)
+        html_filename = self.render_html(self.result_filename, reviews, self.info_data)
         return reviews, html_filename
 
 

@@ -38,6 +38,8 @@ class YandexReviews(BaseReviews, MapReviewsInterface):
         self.result_filename = RESULT_HTML_FILENAME + str(uuid.uuid4()) + '.html'
         self.source_filename = SOURCE_HTML_FILENAME + str(uuid.uuid4()) + ".html"
 
+        self.info_data = data
+        self.info_data['map_name'] = "Yandex Maps"
         self.search_data = {
             data.get('city'): SEARCH_TEXT_CITY,
             data.get("organisation"): PATTERN_TEXT_COUNT_ORGANISATION
@@ -151,7 +153,7 @@ class YandexReviews(BaseReviews, MapReviewsInterface):
         links = self.get_links_on_branches(self.count_organisation)
         all_reviews = self.get_reviews_by_links(links)
 
-        html_filename = self.render_html(self.result_filename, all_reviews)
+        html_filename = self.render_html(self.result_filename, all_reviews, self.info_data)
         return all_reviews, html_filename
 
 

@@ -96,7 +96,7 @@ class RenderHTMLBody:
             new_str += dictionary.get(item) if dictionary.get(item) else "_"
         return new_str
 
-    def create(self, reviews: dict):
+    def create(self, reviews: dict, info_data: dict):
         addresses = reviews.keys()
         addresses_with_reviews = [
             {
@@ -110,7 +110,15 @@ class RenderHTMLBody:
             self.get_slug_address(address) for address in addresses
         ]
         all_count_reviews = sum([len(reviews.get(address)) for address in addresses if reviews.get(address)])
-        body = render_jinja_html(SOURCE_RENDERING_FILE, slug_addresses=slug_addresses, addresses_with_reviews=addresses_with_reviews, all_count_reviews=all_count_reviews)
+        body = render_jinja_html(
+            SOURCE_RENDERING_FILE,
+            slug_addresses=slug_addresses,
+            addresses_with_reviews=addresses_with_reviews,
+            all_count_reviews=all_count_reviews,
+            organisation=info_data.get("organisation"),
+            city=info_data.get("city"),
+            map_name=info_data.get("map_name")
+        )
         with open(self.filename, mode='w') as file:
             file.write(body)
         return self.filename

@@ -33,6 +33,9 @@ class GisReviews(BaseReviews, MapReviewsInterface):
         }
         self.url = "https://2gis.ru/"
 
+        self.info_data = data
+        self.info_data['map_name'] = "2Gis"
+
         self.result_filename = RESULT_HTML_FILENAME + str(uuid.uuid4()) + '.html'
         self.source_filename = SOURCE_HTML_FILENAME + str(uuid.uuid4()) + ".html"
 
@@ -90,7 +93,7 @@ class GisReviews(BaseReviews, MapReviewsInterface):
         if not result:
             return None, None
         reviews = self.get_reviews()
-        html_filename = self.render_html(self.result_filename, reviews)
+        html_filename = self.render_html(self.result_filename, reviews, self.info_data)
         return reviews, html_filename
 
 

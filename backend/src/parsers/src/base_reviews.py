@@ -22,8 +22,8 @@ class BaseReviews(BaseDriver, ABC):
         return self.ajax_handling.get_accordance(method_search, value_search, count_elements)
 
     @staticmethod
-    def render_html(filename, reviews):
-        return RenderHTMLBody(filename).create(reviews)
+    def render_html(filename, reviews, info_data):
+        return RenderHTMLBody(filename).create(reviews, info_data=info_data)
 
     def _get_reviews(self,
                      count_reviews,
