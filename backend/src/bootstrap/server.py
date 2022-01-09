@@ -1,4 +1,6 @@
-from fastapi import FastAPI
+from typing import List
+
+from fastapi import FastAPI, APIRouter
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -12,10 +14,10 @@ class Server:
         cls.app: FastAPI = app
 
     @classmethod
-    def set_routers(cls, routers):
+    def set_routers(cls, routers: List[APIRouter]):
         cls.app: FastAPI
         for router in routers:
-            cls.app.include_router(router)
+            cls.app.include_router(router, prefix="/api/v1")
 
     @classmethod
     def set_exception_handlers(cls, handlers):
