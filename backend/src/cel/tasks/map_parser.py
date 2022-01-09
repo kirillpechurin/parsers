@@ -16,10 +16,10 @@ def map_parser_task(map_name, data: dict, order_id: str):
     driver, display = get_driver()
     reviews, html_filename = instance_class(driver=driver, data=data).find()
     display.stop()
+    OrderService().update_status_order(order_id)
     if not reviews or not html_filename:
         return "Failed parsing review from {}".format(map_name)
 
-    OrderService().update_status_order(order_id)
     new_html_filename = DIRECTORY_STORAGE_MAPS_RESULT + html_filename.split("/")[-1]
     os.replace(html_filename, new_html_filename)
     new_html_filename.replace("storage/", "")
