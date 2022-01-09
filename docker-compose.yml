@@ -13,6 +13,8 @@ services:
       - ./frontend:/frontend/
     ports:
       - "5000:5000"
+    networks:
+      - common
 
   mongodb:
     image: mongo
@@ -29,6 +31,8 @@ services:
     ports:
       - "27017:27017"
     restart: always
+    networks:
+      - common
 
   backend:
     restart: always
@@ -46,12 +50,16 @@ services:
       - "8000:8000"
     depends_on:
       - mongodb
+    networks:
+      - common
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
     container_name: ds-parsers-rabbitmq
     ports:
       - "5672:5672"
+    networks:
+      - common
 
   celery:
     restart: always
@@ -68,12 +76,14 @@ services:
       - rabbitmq
     links:
       - rabbitmq:rabbitmq
+    networks:
+      - common
 
   nginx:
     container_name: ds-parsers-nginx
     image: nginx:latest
     ports:
-      - "8081:8081"
+      - "80:80"
     volumes:
       - ./nginx/nginx-setup.conf:/etc/nginx/conf.d/default.conf:ro
       - ./backend/static:/backend/static/
@@ -81,6 +91,26 @@ services:
     depends_on:
       - backend
       - frontend
+    networks:
+      - common
+
+  ngrok:
+    container_name: ds-parsers-ngrok
+    image: wernight/ngrok:latest
+    ports:
+      - "4040:4040"
+    environment:
+      NGROK_PROTOCOL: http
+      NGROK_PORT: nginx:80
+      NGROK_AUTH: ${NGROK_AUTH}
+    depends_on:
+      - nginx
+    networks:
+      - common
+
+networks:
+  common:
+    driver: bridge
 
 volumes:
   ds_mongodb_data:
