@@ -3,7 +3,7 @@ import os
 
 import requests
 
-API_SERVER = "http://backend:8000"
+API_SERVER = "http://backend:8000/api/v1"
 HEADER_TOKEN = "Authorization"
 TOKEN = "Bearer {}"
 ORIGIN_HEADER_VALUE = os.environ.get("ORIGIN")
