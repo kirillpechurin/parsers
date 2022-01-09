@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Dict, List, Optional
 
+import pymongo
 import pytz
 from bson import ObjectId
 from pydantic import EmailStr
@@ -53,7 +54,7 @@ class OrderService(BaseService):
                 "email": email,
                 "status_ready": True
             }
-        )
+        ).sort('created_at', pymongo.DESCENDING)
         results = [result for result in results]
         return results
 
