@@ -56,7 +56,7 @@ def confirm_email(account_id):
     if errors:
         flash_message = errors
     flash(flash_message)
-    if session['x_token']:
+    if session.get('x_token'):
         return redirect(url_for("account.personal_office"))
     return redirect(url_for("account.login"))
 
