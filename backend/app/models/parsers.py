@@ -147,7 +147,13 @@ class MapReviews(BaseModel):
         ...,
         title='Имя html файла отзывов',
         description="Это html file с отрисовкой всех отзывов",
-        exampple="reviews_gishfg83yq8r4437r4h7834873.html"
+        example="reviews_gishfg83yq8r4437r4h7834873.html"
+    )
+    json_filename: str = Field(
+        None,
+        title="Имя json файла отзывов",
+        description="Это json file со всеми отзывами и с мета данными",
+        example="reviews_gishfg83yq8r4437r4h7834873.json"
     )
     data: dict = Field(
         ...,
