@@ -1,3 +1,5 @@
+import os
+
 from selenium import webdriver
 from pyvirtualdisplay import Display
 from selenium.webdriver.firefox.options import Options
@@ -15,3 +17,10 @@ def get_driver():
     options.add_argument("--headless")
     display.start()
     return webdriver.Firefox(options=options), display
+
+
+def move_file(old_path, new_path, replace_on_empty=None):
+    os.replace(old_path, new_path)
+    if replace_on_empty:
+        new_path.replace(replace_on_empty, "")
+    return new_path
