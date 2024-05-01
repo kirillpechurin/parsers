@@ -4,11 +4,11 @@ services:
 
   frontend:
     restart: always
-    container_name: ds-parsers-frontend
+    container_name: parsers-frontend
     build:
       context: ./frontend
     env_file:
-      - ./frontend/.env.frontend
+      - ./frontend/.env
     volumes:
       - ./frontend:/frontend/
     ports:
@@ -18,7 +18,7 @@ services:
 
   mongodb:
     image: mongo
-    container_name: ds-parsers-mongodb
+    container_name: parsers-mongodb
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_DB_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_DB_PASSWORD}
@@ -36,11 +36,11 @@ services:
 
   backend:
     restart: always
-    container_name: ds-parsers-backend
+    container_name: parsers-backend
     build:
       context: ./backend
     env_file:
-      - backend/.env.backend
+      - backend/.env
     command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
     volumes:
       - ./backend:/backend/
@@ -55,7 +55,7 @@ services:
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
-    container_name: ds-parsers-rabbitmq
+    container_name: parsers-rabbitmq
     ports:
       - "5672:5672"
     networks:
@@ -63,11 +63,11 @@ services:
 
   celery:
     restart: always
-    container_name: ds-parsers-celery
+    container_name: parsers-celery
     build:
       context: ./backend
     env_file:
-      - backend/.env.backend
+      - backend/.env
     command: celery -A src.cel.celery worker --loglevel=info
     volumes:
       - ./backend:/backend/
@@ -80,7 +80,7 @@ services:
       - common
 
   nginx:
-    container_name: ds-parsers-nginx
+    container_name: parsers-nginx
     image: nginx:latest
     ports:
       - "80:80"
@@ -91,20 +91,6 @@ services:
     depends_on:
       - backend
       - frontend
-    networks:
-      - common
-
-  ngrok:
-    container_name: ds-parsers-ngrok
-    image: wernight/ngrok:latest
-    ports:
-      - "4040:4040"
-    environment:
-      NGROK_PROTOCOL: http
-      NGROK_PORT: nginx:80
-      NGROK_AUTH: ${NGROK_AUTH}
-    depends_on:
-      - nginx
     networks:
       - common
 
