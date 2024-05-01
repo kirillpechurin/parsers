@@ -1,0 +1,13 @@
+{% extends 'connect_cdn.html' %}
+
+{% block base_content %}
+<body>
+{% include 'navbar.html' %}
+<div class="container mt-3">
+    {% block content %}
+
+    {% endblock content %}
+</div>
+</body>
+
+{% endblock base_content %}

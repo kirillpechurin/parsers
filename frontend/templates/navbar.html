@@ -1,0 +1,44 @@
+<nav class="navbar navbar-expand-sm navbar-light bg-light">
+    <div class="container collapse navbar-collapse">
+        <a class="navbar-brand" href="{{ url_for('parsers.index') }}">Parsers</a>
+        <ul class="navbar-nav me-auto">
+            {% for name, link in (
+                                    ('Главная', url_for('parsers.index')),
+                                    ("Доступные площадки",  url_for('parsers.available_platforms')),
+                                    ("Примеры", url_for('parsers.examples')),
+                                    ("Сделать заказ", url_for('parsers.make_order'))
+                                ) %}
+            <li class="nav-item">
+                {% if request.path == link %}
+                    <a class="nav-link active" href="{{ link }}">{{ name }}</a>
+                {% else %}
+                    <a class="nav-link" href="{{ link }}">{{ name }}</a>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+        <ul class="navbar-nav ms-auto">
+            {% if session['x_token'] %}
+            <li class="nav-item">
+                {% if request.path == url_for('account.personal_office') %}
+                    <a class="nav-link active" href="{{ url_for('account.personal_office') }}">Личный кабинет</a>
+                {% else %}
+                    <a class="nav-link" href="{{ url_for('account.personal_office') }}">Личный кабинет</a>
+                {% endif %}
+            </li>
+            <li class="nav-item">
+                <form action="{{ url_for('account.logout') }}" method="post">
+                    <button type="submit" class="btn nav-link">Выйти</button>
+                </form>
+            </li>
+            {% else %}
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('account.login') }}">Войти</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('account.signup') }}">Зарегистрироваться</a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>

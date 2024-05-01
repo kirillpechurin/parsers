@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-warning" role="alert">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+    <div class="col-md-3">
+        <p>{{ account.email }}</p>
+        <p>{{ account.first_name }}</p>
+        <p>{{ account.last_name }}</p>
+        {% if account.confirmed %}
+            <p class="text-success">
+                    Аккаунт подтвержден!
+            </p>
+        {% else %}
+            <p class="text-danger">
+                Аккаунт не подтвержден!
+            </p>
+        {% endif %}
+    </div>
+    <div class="col-md-3 d-flex align-items-end">
+        <button type="button" class="m-1 btn btn-info" data-bs-toggle="modal" data-bs-target="#updateInfoAccount">
+            Изменить
+        </button>
+        <button type="button" class="m-1 btn btn-info" data-bs-toggle="modal" data-bs-target="#resetPasswordAuthModal">
+            Сменить пароль
+        </button>
+    </div>
+    <hr class="mt-2">
+</div>
+<div class="row mt-5">
+    <div class="col-md-3">
+        <h4>Заказы</h4>
+    </div>
+    <div class="col-md-3 d-flex align-items-end">
+        <a class="m-1 btn btn-info" href="{{ url_for('parsers.orders') }}">Перейти</a>
+    </div>
+    <hr class="mt-2">
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="updateInfoAccount" tabindex="-1" aria-labelledby="updateInfoAccountLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateInfoAccountLabel">Обновить информацию об аккаунте</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="updateAccountForm" class="form" method="POST" action="{{ url_for('account.update_account_info') }}">
+                    <div class="form-group">
+                        <label class="text-muted">Email <span class="text-danger">*</span></label>
+                        <input required type="email" name="email" class="form-control" value="{{account.email}}"
+                               placeholder="Enter E-mail address">
+                    </div>
+                    <div class="form-group">
+                        <label class="text-muted">First name </label>
+                        <input type="text" name="first_name" class="form-control" value="{{account.first_name}}"
+                               placeholder="Enter first name">
+                    </div>
+                    <div class="form-group">
+                        <label class="text-muted">Last name </label>
+                        <input type="text" name="last_name" class="form-control" value="{{account.last_name}}"
+                               placeholder="Enter last name">
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                <button type="submit" class="btn btn-info" id="updateAccountSubmit">Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="resetPasswordAuthModal" tabindex="-1" aria-labelledby="resetPasswordAuthModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="resetPasswordAuthModalLabel">Сменить пароль</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="resetPasswordForm" class="form" method="POST" action="{{ url_for('account.reset_password_auth') }}">
+                    <div class="form-group">
+                        <label class="text-muted">Old Password <span class="text-danger">*</span></label>
+                        <input required type="password" name="old_password" class="form-control"
+                               placeholder="Enter old password">
+                    </div>
+                    <div class="form-group">
+                        <label class="text-muted">New Password <span class="text-danger">*</span></label>
+                        <input type="password" name="new_password" class="form-control"
+                               placeholder="Enter new password">
+                    </div>
+                    <div class="form-group">
+                        <label class="text-muted">Repeat New Password <span class="text-danger">*</span></label>
+                        <input type="password" name="repeat_new_password" class="form-control"
+                               placeholder="Repeat new password">
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                <button type="submit" class="btn btn-info" id="resetPasswordSubmit">Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        $('#updateAccountSubmit').click(function() {
+            $('#updateAccountForm').submit();
+        });
+
+        $('#resetPasswordSubmit').click(function() {
+            $('#resetPasswordForm').submit();
+        });
+
+    });
+</script>
+{% endblock content %}

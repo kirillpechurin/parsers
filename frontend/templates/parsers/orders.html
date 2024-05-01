@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    {% for order in orders %}
+        <div class="order">
+            <hr>
+            <h5>Тип парсинга: {{ order.data.parser.type }}. {{ order.data.parser.name }}</h5>
+            <h5>Город: {{ order.data.data.city }}. Организация: {{ order.data.data.organisation }}</h5>
+            <h5>Дата: {{ order.created_at.split("T")[0] }}</h5>
+            {% if order.result %}
+            <h6 class="text-success">Успешно!</h6>
+            {% else %}
+            <h6 class="text-warning">В процессе парсинга возникла ошибка!</h6>
+            {% endif %}
+            <div class="row">
+                <div class="d-flex flex-row-reverse">
+                    {% if order.result %}
+                        <a class="btn btn-info m-1" href="{{ url_for('parsers.order_detail', order_id=order.order_id) }}">Посмотреть результаты</a>
+                        <div class="dropdown m-1">
+                            <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Скачать файл
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="btn btn-light m-1" href="/{{ order.result.html_filename }}" download>
+                                    HTML
+                                </a>
+                                <a class="btn btn-light m-1" href="/{{ order.result.json_filename }}" download>
+                                    JSON
+                                </a>
+                            </div>
+                        </div>
+
+                    {% endif %}
+                    <div class="m-1">
+                        <form action="{{ url_for('parsers.delete_order', order_id=order.order_id) }}" method="post" onsubmit="return confirm('Are you want to delete this order?')">
+                            <button type="submit" class="btn btn-danger">Удалить</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock content %}

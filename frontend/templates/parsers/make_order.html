@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="maps">
+        <h5>Парсинг отзывов об организации с карт</h5>
+        <hr class="p-1 rounded">
+        {% for map in maps %}
+            <div class="row">
+                <div class="col-md-3">
+                    <img class="img w-100" src="{{url_for('static', filename=map.image_link) }}" alt="image">
+                </div>
+                <div class="col-md-4">
+                    <h5>{{ map.name }}</h5>
+                </div>
+                <div class="col-md-5 d-flex flex-row-reverse">
+                    <a class="btn btn-info m-5" href="/order/maps/{{ map.name }}">Выбрать</a>
+                </div>
+                <hr>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock content %}
